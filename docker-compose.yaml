@@ -1,0 +1,35 @@
+version: '3.7'
+    
+services:
+  database:
+    image: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: teams_db
+      POSTGRES_USER: teams_user
+      POSTGRES_PASSWORD: teams12345
+    ports: 
+      - 5432:5432
+    volumes:
+      - database-teams:/var/lib/postgresql/data/
+  teams-app-service:
+    build: .
+    restart: unless-stopped
+    environment: 
+      DEBUG: "True"
+      DB_NAME: teams_db
+      DB_USER: teams_user
+      DB_PASSWORD: teams12345
+      DB_HOST: database
+      DB_PORT: 5432
+    env_file: 
+      - .env
+    entrypoint: bash run.sh
+    volumes:
+      - .:/fyle-teams-app
+    ports:
+      - 7000:7000
+    depends_on:
+      - database
+volumes: 
+    database-teams:
