@@ -1,0 +1,28 @@
+FROM python:3.8-slim
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+#================================================================
+# pip install required modules
+#================================================================
+
+RUN pip install --upgrade setuptools pip
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install -r /tmp/requirements.txt
+
+#==================================================
+# Copy the latest code
+#==================================================
+
+RUN mkdir -p /fyle-teams-app
+WORKDIR /fyle-teams-app
+COPY . /fyle-teams-app
+
+# Run pylint checks
+RUN pylint --rcfile=.pylintrc fyle_teams_app/ fyle_teams_service/
+
+# Expose server port
+EXPOSE 7000
+
+CMD /bin/bash run.sh
