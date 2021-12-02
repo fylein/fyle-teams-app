@@ -6,7 +6,7 @@
 
 * Once ngrok is installed, run the below command to start ngrok tunnel
     ```
-    ngrok http 7000
+    ngrok http 8000
     ```
 
 * This will spin up a ngrok tunnel with a host name that will proxy slack's API calls to our local server.

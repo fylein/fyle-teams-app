@@ -28,7 +28,7 @@ services:
     volumes:
       - .:/fyle-teams-app
     ports:
-      - 7000:7000
+      - 8000:8000
     depends_on:
       - database
 volumes: 
