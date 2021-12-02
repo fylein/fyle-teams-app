@@ -49,7 +49,6 @@ class TeamsView(View):
             request.headers['Authorization'] if 'Authorization' in request.headers else ''
         )
 
-
         try:
             response = await ADAPTER.process_activity(activity, auth_header, FyleBot().on_turn)
 
