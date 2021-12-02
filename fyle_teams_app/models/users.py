@@ -35,4 +35,3 @@ class User(models.Model):
             team_user_id=user_id,
             team_user_conversation_reference=conversation_reference
         )
-        
