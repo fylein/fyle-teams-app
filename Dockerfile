@@ -20,9 +20,9 @@ WORKDIR /fyle-teams-app
 COPY . /fyle-teams-app
 
 # Run pylint checks
-RUN pylint --rcfile=.pylintrc fyle_teams_app/ fyle_teams_service/
+RUN pylint --rcfile=.pylintrc fyle_teams_app/
 
 # Expose server port
-EXPOSE 7000
+EXPOSE 8000
 
 CMD /bin/bash run.sh

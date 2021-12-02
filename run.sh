@@ -1,2 +1,2 @@
 python manage.py migrate
-uvicorn --reload fyle_slack_service.asgi:application -b 0.0.0.0:7000
+gunicorn -c gunicorn_config.py fyle_teams_service.asgi -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000
