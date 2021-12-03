@@ -7,14 +7,15 @@ from fyle.platform import Platform
 from django.conf import settings
 
 from fyle_teams_app.libs import http, assertions, utils
+from fyle_teams_app.models.user_subscriptions import SubscriptionType
 
 
 FYLE_TOKEN_URL = '{}/oauth/token'.format(settings.FYLE_ACCOUNTS_URL)
 
 
-def get_fyle_sdk_connection(refresh_token: str) -> Platform:
+async def get_fyle_sdk_connection(refresh_token: str) -> Platform:
     access_token = get_fyle_access_token(refresh_token)
-    cluster_domain = get_cluster_domain(access_token)
+    cluster_domain = await get_cluster_domain(access_token)
 
     FYLE_PLATFORM_URL = '{}/platform/v1'.format(cluster_domain)
 
@@ -27,14 +28,14 @@ def get_fyle_sdk_connection(refresh_token: str) -> Platform:
     )
 
 
-def get_cluster_domain(access_token: str) -> str:
+async def get_cluster_domain(access_token: str) -> str:
     cluster_domain_url = '{}/oauth/cluster'.format(settings.FYLE_ACCOUNTS_URL)
     headers = {
         'content-type': 'application/json',
         'Authorization': 'Bearer {}'.format(access_token)
     }
 
-    response = http.post(url=cluster_domain_url, headers=headers)
+    response = await http.post(url=cluster_domain_url, headers=headers)
     assertions.assert_valid(response.status_code == 200, 'Error fetching cluster domain')
 
     return response.json()['cluster_domain']
@@ -58,7 +59,7 @@ def get_fyle_access_token(fyle_refresh_token: str) -> str:
     return oauth_response.json()['access_token']
 
 
-def get_fyle_refresh_token(code: str) -> str:
+async def get_fyle_refresh_token(code: str) -> str:
     FYLE_OAUTH_TOKEN_URL = '{}/oauth/token'.format(settings.FYLE_ACCOUNTS_URL)
 
     oauth_payload = {
@@ -68,14 +69,14 @@ def get_fyle_refresh_token(code: str) -> str:
         'code': code
     }
 
-    oauth_response = http.post(FYLE_OAUTH_TOKEN_URL, oauth_payload)
+    oauth_response = await http.post(FYLE_OAUTH_TOKEN_URL, oauth_payload)
     assertions.assert_good(oauth_response.status_code == 200, 'Error fetching fyle token details')
 
     return oauth_response.json()['refresh_token']
 
 
-def get_fyle_profile(refresh_token: str) -> Dict:
-    connection = get_fyle_sdk_connection(refresh_token)
+async def get_fyle_profile(refresh_token: str) -> Dict:
+    connection = await get_fyle_sdk_connection(refresh_token)
     fyle_profile_response = connection.v1beta.spender.my_profile.get()
     return fyle_profile_response['data']
 
@@ -123,3 +124,27 @@ def get_fyle_oauth_url(user_id: str, team_id: str) -> str:
     )
 
     return FYLE_OAUTH_URL
+
+
+async def upsert_fyle_subscription(cluster_domain: str, access_token: str, subscription_payload: Dict, subscription_type: SubscriptionType) -> requests.Response:
+    FYLE_PLATFORM_URL = '{}/platform/v1'.format(cluster_domain)
+
+    SUBSCRIPTION_TYPE_URL_MAPPINGS = {
+        SubscriptionType.SPENDER: '{}/spender/subscriptions'.format(FYLE_PLATFORM_URL),
+        SubscriptionType.APPROVER: '{}/approver/subscriptions'.format(FYLE_PLATFORM_URL)
+    }
+
+    subscrition_url = SUBSCRIPTION_TYPE_URL_MAPPINGS[subscription_type]
+
+    headers = {
+        'content-type': 'application/json',
+        'Authorization': 'Bearer {}'.format(access_token)
+    }
+
+    subscription = await http.post(
+        url=subscrition_url,
+        json=subscription_payload,
+        headers=headers
+    )
+
+    return subscription

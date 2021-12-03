@@ -1,7 +1,11 @@
 from typing import Dict
-from django.db import models
+
+
+from django.db import models, transaction
 
 from fyle_teams_app.libs import utils
+# from fyle_teams_app.models import UserSubscription
+
 
 class User(models.Model):
 
@@ -24,7 +28,7 @@ class User(models.Model):
 
 
     @staticmethod
-    def get_by_id(user_id):
+    def get_by_id(user_id: str):
         return utils.get_or_none(User, team_user_id=user_id)
 
 
@@ -35,3 +39,38 @@ class User(models.Model):
             team_user_id=user_id,
             team_user_conversation_reference=conversation_reference
         )
+
+
+    @staticmethod
+    def link_fyle_account(team_user_id: str, fyle_profile: Dict, fyle_refresh_token: str):
+
+        User.objects.filter(team_user_id=team_user_id).update(
+            fyle_user_id=fyle_profile['user_id'],
+            fyle_refresh_token=fyle_refresh_token,
+            fyle_org_id=fyle_profile['org_id'],
+            email=fyle_profile['user']['email']
+        )
+
+        return User.get_by_id(team_user_id)
+
+    # @staticmethod
+    # def link_fyle_account(code: str, team_user_id: str):
+
+    #     user = None
+
+    #     with transaction.atomic():
+
+    #         fyle_refresh_token = fyle_utils.get_fyle_refresh_token(code)
+
+    #         fyle_profile = fyle_utils.get_fyle_profile(fyle_refresh_token)
+
+    #         user = User.objects.get(team_user_id=team_user_id).update(
+    #             fyle_user_id=fyle_profile['user_id'],
+    #             fyle_refresh_token=fyle_refresh_token,
+    #             fyle_org_id=fyle_profile['org_id'],
+    #             email=fyle_profile['user']['email']
+    #         )
+
+    #         UserSubscription.create_notification_subscriptions(user, fyle_profile)
+
+    #     return user
