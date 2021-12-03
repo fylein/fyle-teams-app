@@ -6,17 +6,18 @@ from typing import Dict
 from asgiref.sync import sync_to_async
 
 from botbuilder.schema import ConversationReference
+from botbuilder.core import CardFactory
 
 from django.http import HttpRequest
-from django.http.response import HttpResponse, JsonResponse
+from django.http.response import HttpResponse
 from django.utils.decorators import classonlymethod
 from django.views import View
-from django.db import transaction
 from django.conf import settings
 
 from fyle_teams_app.models import User, UserSubscription
 from fyle_teams_app.libs import utils, assertions, logger, team_utils, fyle_utils
 from fyle_teams_app.models.user_subscriptions import SubscriptionType
+from fyle_teams_app.ui.cards import authorisation as authorisation_card
 
 
 logger = logger.get_logger(__name__)
@@ -94,11 +95,18 @@ class FyleAuthorisation(View):
 
                 await self.create_notification_subscriptions(user, fyle_profile)
 
-        return HttpResponse('Your Fyle account is successfully linked with Microsoft Teams')
+                post_auth_card = authorisation_card.get_post_auth_card()
+
+                await team_utils.send_message_to_user(
+                    user_conversation_reference,
+                    attachments=[CardFactory.adaptive_card(post_auth_card)]
+                )
+
+        return HttpResponse('Yaay! Your Fyle account is successfully linked with Microsoft Teams')
 
 
     async def create_notification_subscriptions(self, user: User, fyle_profile: Dict) -> None:
-        access_token = fyle_utils.get_fyle_access_token(user.fyle_refresh_token)
+        access_token = await fyle_utils.get_fyle_access_token(user.fyle_refresh_token)
         cluster_domain = await fyle_utils.get_cluster_domain(access_token)
 
         SUBSCRIPTON_WEBHOOK_DETAILS_MAPPING = {

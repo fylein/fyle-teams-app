@@ -14,7 +14,7 @@ FYLE_TOKEN_URL = '{}/oauth/token'.format(settings.FYLE_ACCOUNTS_URL)
 
 
 async def get_fyle_sdk_connection(refresh_token: str) -> Platform:
-    access_token = get_fyle_access_token(refresh_token)
+    access_token = await get_fyle_access_token(refresh_token)
     cluster_domain = await get_cluster_domain(access_token)
 
     FYLE_PLATFORM_URL = '{}/platform/v1'.format(cluster_domain)
@@ -41,7 +41,7 @@ async def get_cluster_domain(access_token: str) -> str:
     return response.json()['cluster_domain']
 
 
-def get_fyle_access_token(fyle_refresh_token: str) -> str:
+async def get_fyle_access_token(fyle_refresh_token: str) -> str:
     payload = {
         'grant_type': 'refresh_token',
         'refresh_token': fyle_refresh_token,
@@ -53,7 +53,7 @@ def get_fyle_access_token(fyle_refresh_token: str) -> str:
         'Content-Type': 'application/json'
     }
 
-    oauth_response = requests.post('{}/oauth/token'.format(settings.FYLE_ACCOUNTS_URL), json=payload, headers=headers)
+    oauth_response = await http.post('{}/oauth/token'.format(settings.FYLE_ACCOUNTS_URL), json=payload, headers=headers)
     assertions.assert_good(oauth_response.status_code == 200, 'Error fetching fyle token details')
 
     return oauth_response.json()['access_token']
@@ -81,9 +81,9 @@ async def get_fyle_profile(refresh_token: str) -> Dict:
     return fyle_profile_response['data']
 
 
-def get_fyle_resource_url(fyle_refresh_token: str, resource: Dict, resource_type: str) -> str:
-    access_token = get_fyle_access_token(fyle_refresh_token)
-    cluster_domain = get_cluster_domain(access_token)
+async def get_fyle_resource_url(fyle_refresh_token: str, resource: Dict, resource_type: str) -> str:
+    access_token = await get_fyle_access_token(fyle_refresh_token)
+    cluster_domain = await get_cluster_domain(access_token)
 
     RESOURCE_URL_MAPPING = {
         'REPORT': '{}/app/main/#/enterprise/reports'.format(cluster_domain),
