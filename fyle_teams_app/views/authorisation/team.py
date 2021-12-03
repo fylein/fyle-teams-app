@@ -1,12 +1,10 @@
 from asgiref.sync import sync_to_async
 
-from django.conf import settings
-
 from botbuilder.core import TurnContext, CardFactory
 from botbuilder.schema import Activity
 
 from fyle_teams_app.models import User
-from fyle_teams_app.libs import utils, fyle_utils
+from fyle_teams_app.libs import fyle_utils
 from fyle_teams_app.ui.cards import authorisation as authorisation_card
 
 class TeamAuthorisation:
