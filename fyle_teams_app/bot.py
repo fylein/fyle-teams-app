@@ -17,5 +17,5 @@ class FyleBot(TeamsActivityHandler):
 
 
     async def on_installation_update_add(self, turn_context: TurnContext):
-        # On bot installation pass control to TeamAuthorisation modile
+        # On bot installation pass control to TeamAuthorisation module
         return await TeamAuthorisation.bot_installed(turn_context)
