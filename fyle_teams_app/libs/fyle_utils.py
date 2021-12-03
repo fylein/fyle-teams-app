@@ -102,14 +102,18 @@ def get_fyle_resource_url(fyle_refresh_token: str, resource: Dict, resource_type
 
 
 def get_fyle_oauth_url(user_id: str, team_id: str) -> str:
+
+    # State object to be used to identify which user is performing Fyle authorisation
     state_params = {
         'user_id': user_id,
         'team_id': team_id
     }
 
+    # Encoding state to be passed in FYLE_OAUTH_URL
     base64_encoded_state = utils.encode_state(state_params)
 
-    redirect_uri = '{}/fyle/authorization'.format(settings.SLACK_SERVICE_BASE_URL)
+    # This url redirects request to our server when Fyle authorisation is done
+    redirect_uri = '{}/fyle/authorisation'.format(settings.SLACK_SERVICE_BASE_URL)
 
     FYLE_OAUTH_URL = '{}/app/developers/#/oauth/authorize?client_id={}&response_type=code&state={}&redirect_uri={}'.format(
         settings.FYLE_ACCOUNTS_URL,
