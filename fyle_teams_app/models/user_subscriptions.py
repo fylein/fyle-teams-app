@@ -35,7 +35,7 @@ class UserSubscription(models.Model):
 
 
     @staticmethod
-    @sync_to_async(thread_sensitive=True)
+    @sync_to_async
     def bulk_create_subsctiption(subsctiptions: List):
         return UserSubscription.objects.bulk_create(subsctiptions)
 
