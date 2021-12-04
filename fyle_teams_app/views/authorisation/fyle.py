@@ -43,9 +43,8 @@ class FyleAuthorisation(View):
         user_id = state_params['user_id']
 
         # Fetch the user
-        user = await sync_to_async(User.get_by_id, thread_sensitive=True)(user_id)
+        user = await User.get_by_id(user_id)
         assertions.assert_found(user, 'user not found')
-
 
         user_conversation_reference = ConversationReference().from_dict(user.team_user_conversation_reference)
 
@@ -71,29 +70,16 @@ class FyleAuthorisation(View):
                 # If the user already exists send a message to user indicating they've already linked Fyle account
                 message = 'Hey buddy you\'ve already linked your *Fyle* account 🌈'
 
-                return await team_utils.send_message_to_user(
+                await team_utils.send_message_to_user(
                     user_conversation_reference,
                     message
                 )
 
+                return HttpResponse('Hey! You\'ve already linked your Fyle account')
+
             else:
-                # Putting below logic inside a transaction block to prevent bad data
-                # If any error occurs in any of the below step, Fyle account link to Slack should not happen
-                # with transaction.atomic():
 
-                # user = await sync_to_async(User.link_fyle_account, thread_sensitive=True)(code, user_id)
-
-                fyle_refresh_token = await fyle_utils.get_fyle_refresh_token(code)
-
-                fyle_profile = await fyle_utils.get_fyle_profile(fyle_refresh_token)
-
-                user = await sync_to_async(User.link_fyle_account, thread_sensitive=True)(
-                    user_id,
-                    fyle_profile,
-                    fyle_refresh_token
-                )
-
-                await self.create_notification_subscriptions(user, fyle_profile)
+                user = await User.link_fyle_account(code, user_id)
 
                 post_auth_card = authorisation_card.get_post_auth_card()
 
@@ -103,61 +89,3 @@ class FyleAuthorisation(View):
                 )
 
         return HttpResponse('Yaay! Your Fyle account is successfully linked with Microsoft Teams')
-
-
-    async def create_notification_subscriptions(self, user: User, fyle_profile: Dict) -> None:
-        access_token = await fyle_utils.get_fyle_access_token(user.fyle_refresh_token)
-        cluster_domain = await fyle_utils.get_cluster_domain(access_token)
-
-        SUBSCRIPTON_WEBHOOK_DETAILS_MAPPING = {
-            SubscriptionType.SPENDER: {
-                'role_required': 'FYLER',
-                'webhook_url': '{}/fyle/fyler/notifications'.format(settings.TEAMS_SERVICE_BASE_URL)
-            },
-            SubscriptionType.APPROVER: {
-                'role_required': 'APPROVER',
-                'webhook_url': '{}/fyle/approver/notifications'.format(settings.TEAMS_SERVICE_BASE_URL)
-            }
-        }
-
-        user_subscriptions = []
-
-        for subscription_type in SubscriptionType:
-            subscription_webhook_details = SUBSCRIPTON_WEBHOOK_DETAILS_MAPPING[subscription_type]
-
-            subscription_role_required = subscription_webhook_details['role_required']
-
-            if subscription_role_required in fyle_profile['roles']:
-                fyle_user_id = user.fyle_user_id
-
-                subscription_webhook_id = str(uuid.uuid4())
-
-                webhook_url = subscription_webhook_details['webhook_url']
-                webhook_url = '{}/{}'.format(webhook_url, subscription_webhook_id)
-
-                subscription_payload = {}
-                subscription_payload['data'] = {
-                    'webhook_url': webhook_url,
-                    'is_enabled': True
-                }
-
-                subscription = await fyle_utils.upsert_fyle_subscription(cluster_domain, access_token, subscription_payload, subscription_type)
-
-                if subscription.status_code != 200:
-                    logger.error('Error while creating %s subscription for user: %s ', subscription_role_required, fyle_user_id)
-                    logger.error('%s Subscription error %s', subscription_role_required, subscription.content)
-                    assertions.assert_good(False)
-
-                subscription_id = subscription.json()['data']['id']
-
-                subscription = UserSubscription(
-                    team_user=user,
-                    subscription_type=subscription_type.value,
-                    fyle_subscription_id=subscription_id,
-                    webhook_id=subscription_webhook_id
-                )
-
-                user_subscriptions.append(subscription)
-
-        # Creating/Inserting subsctiptions in bulk
-        await sync_to_async(UserSubscription.bulk_create_subsctiption, thread_sensitive=True)(user_subscriptions)

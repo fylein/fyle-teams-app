@@ -19,7 +19,7 @@ class TeamAuthorisation:
         user_id = turn_context_dict['from_property']['id']
 
         # Check if user already exists
-        user = await sync_to_async(User.get_by_id, thread_sensitive=True)(user_id)
+        user = await User.get_by_id(user_id)
 
         # If user exists -> user has already installed Fyle app
         if user is not None:
