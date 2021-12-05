@@ -78,6 +78,7 @@ class UserSubscription(models.Model):
                     'is_enabled': True
                 }
 
+                # This will create async task an run in parallel and do another task
                 subscription = await asyncio.create_task(
                     UserSubscription.upsert_fyle_subscription(cluster_domain, access_token, subscription_payload, subscription_type)
                 )
