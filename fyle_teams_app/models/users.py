@@ -1,4 +1,7 @@
 from typing import Dict
+
+from asgiref.sync import sync_to_async
+
 from django.db import models
 
 from fyle_teams_app.libs import utils
@@ -24,11 +27,13 @@ class User(models.Model):
 
 
     @staticmethod
+    @sync_to_async
     def get_by_id(user_id):
         return utils.get_or_none(User, team_user_id=user_id)
 
 
     @staticmethod
+    @sync_to_async
     def create_user(team_id: str, user_id: str, conversation_reference: Dict):
         return User.objects.get_or_create(
             team_id=team_id,

@@ -113,7 +113,7 @@ def get_fyle_oauth_url(user_id: str, team_id: str) -> str:
     base64_encoded_state = utils.encode_state(state_params)
 
     # This url redirects request to our server when Fyle authorisation is done
-    redirect_uri = '{}/fyle/authorisation'.format(settings.SLACK_SERVICE_BASE_URL)
+    redirect_uri = '{}/fyle/authorisation'.format(settings.TEAMS_SERVICE_BASE_URL)
 
     FYLE_OAUTH_URL = '{}/app/developers/#/oauth/authorize?client_id={}&response_type=code&state={}&redirect_uri={}'.format(
         settings.FYLE_ACCOUNTS_URL,
