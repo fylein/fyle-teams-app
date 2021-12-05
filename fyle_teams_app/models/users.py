@@ -2,7 +2,7 @@ from typing import Dict
 
 from asgiref.sync import sync_to_async
 
-from django.db import models, transaction
+from django.db import models
 
 from fyle_teams_app.libs import utils, fyle_utils
 from fyle_teams_app.models.user_subscriptions import UserSubscription

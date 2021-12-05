@@ -1,5 +1,3 @@
-from asgiref.sync import sync_to_async
-
 from botbuilder.core import TurnContext, CardFactory
 from botbuilder.schema import Activity
 
@@ -26,7 +24,7 @@ class TeamAuthorisation:
             return await turn_context.send_activity('Hey 👋, you\'ve already installed Fyle app!')
 
         # Create entry for user
-        user = await sync_to_async(User.create_user, thread_sensitive=True)(team_id, user_id, user_conversation_reference_dict)
+        user = await User.create_user(team_id, user_id, user_conversation_reference_dict)
 
         FYLE_OAUTH_URL = fyle_utils.get_fyle_oauth_url(user_id, team_id)
 
