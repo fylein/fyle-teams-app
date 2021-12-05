@@ -1,22 +1,16 @@
-import uuid
 import asyncio
-
-from typing import Dict
-
-from asgiref.sync import sync_to_async
 
 from botbuilder.schema import ConversationReference
 from botbuilder.core import CardFactory
 
 from django.http import HttpRequest
-from django.http.response import HttpResponse
+from django.http.response import HttpResponseRedirect
 from django.utils.decorators import classonlymethod
 from django.views import View
 from django.conf import settings
 
-from fyle_teams_app.models import User, UserSubscription
-from fyle_teams_app.libs import utils, assertions, logger, team_utils, fyle_utils
-from fyle_teams_app.models.user_subscriptions import SubscriptionType
+from fyle_teams_app.models import User
+from fyle_teams_app.libs import utils, assertions, logger, team_utils
 from fyle_teams_app.ui.cards import authorisation as authorisation_card
 
 
@@ -75,8 +69,6 @@ class FyleAuthorisation(View):
                     message
                 )
 
-                return HttpResponse('Hey! You\'ve already linked your Fyle account')
-
             else:
 
                 user = await User.link_fyle_account(code, user_id)
@@ -88,4 +80,6 @@ class FyleAuthorisation(View):
                     attachments=[CardFactory.adaptive_card(post_auth_card)]
                 )
 
-        return HttpResponse('Yaay! Your Fyle account is successfully linked with Microsoft Teams')
+        redirect_url = 'https://teams.microsoft.com/l/chat/0/0?users=28:{}'.format(settings.TEAMS_APP_ID)
+
+        return HttpResponseRedirect(redirect_url)
