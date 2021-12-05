@@ -1,7 +1,5 @@
 from typing import Dict
 
-import requests
-
 from fyle.platform import Platform
 
 from django.conf import settings
@@ -35,9 +33,11 @@ async def get_cluster_domain(access_token: str) -> str:
     }
 
     response = await http.post(url=cluster_domain_url, headers=headers)
-    assertions.assert_valid(response.status_code == 200, 'Error fetching cluster domain')
+    assertions.assert_valid(response.status == 200, 'Error fetching cluster domain')
 
-    return response.json()['cluster_domain']
+    response = await response.json()
+
+    return response['cluster_domain']
 
 
 async def get_fyle_access_token(fyle_refresh_token: str) -> str:
@@ -53,9 +53,11 @@ async def get_fyle_access_token(fyle_refresh_token: str) -> str:
     }
 
     oauth_response = await http.post('{}/oauth/token'.format(settings.FYLE_ACCOUNTS_URL), json=payload, headers=headers)
-    assertions.assert_good(oauth_response.status_code == 200, 'Error fetching fyle token details')
+    assertions.assert_good(oauth_response.status == 200, 'Error fetching fyle token details')
 
-    return oauth_response.json()['access_token']
+    oauth_response = await oauth_response.json()
+
+    return oauth_response['access_token']
 
 
 async def get_fyle_refresh_token(code: str) -> str:
@@ -69,9 +71,11 @@ async def get_fyle_refresh_token(code: str) -> str:
     }
 
     oauth_response = await http.post(FYLE_OAUTH_TOKEN_URL, oauth_payload)
-    assertions.assert_good(oauth_response.status_code == 200, 'Error fetching fyle token details')
+    assertions.assert_good(oauth_response.status == 200, 'Error fetching fyle token details')
 
-    return oauth_response.json()['refresh_token']
+    oauth_response = await oauth_response.json()
+
+    return oauth_response['refresh_token']
 
 
 async def get_fyle_profile(refresh_token: str) -> Dict:

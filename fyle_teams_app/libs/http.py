@@ -1,9 +1,8 @@
 from typing import Any, Callable, Dict, Tuple
 
 import json
+import aiohttp
 import requests
-
-from aiohttp import ClientSession
 
 from fyle_teams_app.libs import logger
 
@@ -11,17 +10,18 @@ from fyle_teams_app.libs import logger
 logger = logger.get_logger(__name__)
 
 
-async def http_request(method: str, url: str, headers: Dict = None, **kwargs: Any) -> requests.Response:
+async def http_request(method: str, url: str, headers: Dict = None, **kwargs: Any) -> aiohttp.ClientResponse:
     headers = requests.structures.CaseInsensitiveDict(headers)
 
-    resp = requests.request(
-        method=method,
-        url=url,
-        headers=headers,
-        **kwargs
-    )
+    async with aiohttp.ClientSession() as session:
+        resp = await session.request(
+            method=method,
+            url=url,
+            headers=headers,
+            **kwargs
+        )
 
-    return resp
+        return resp
 
 
 async def process_data_and_headers(data: Dict, headers: Dict) -> Tuple[Dict, Dict]:

@@ -2,7 +2,8 @@ from typing import Dict, List
 
 import enum
 import uuid
-import requests
+import aiohttp
+import asyncio
 
 
 from asgiref.sync import sync_to_async
@@ -77,14 +78,18 @@ class UserSubscription(models.Model):
                     'is_enabled': True
                 }
 
-                subscription = await UserSubscription.upsert_fyle_subscription(cluster_domain, access_token, subscription_payload, subscription_type)
+                subscription = await asyncio.create_task(
+                    UserSubscription.upsert_fyle_subscription(cluster_domain, access_token, subscription_payload, subscription_type)
+                )
 
-                if subscription.status_code != 200:
+                if subscription.status != 200:
                     logger.error('Error while creating %s subscription for user: %s ', subscription_role_required, fyle_user_id)
                     logger.error('%s Subscription error %s', subscription_role_required, subscription.content)
                     assertions.assert_good(False)
 
-                subscription_id = subscription.json()['data']['id']
+                subscription = await subscription.json()
+
+                subscription_id = subscription['data']['id']
 
                 subscription = UserSubscription(
                     team_user=user,
@@ -100,7 +105,7 @@ class UserSubscription(models.Model):
 
 
     @staticmethod
-    async def upsert_fyle_subscription(cluster_domain: str, access_token: str, subscription_payload: Dict, subscription_type: SubscriptionType) -> requests.Response:
+    async def upsert_fyle_subscription(cluster_domain: str, access_token: str, subscription_payload: Dict, subscription_type: SubscriptionType) -> aiohttp.ClientResponse:
         FYLE_PLATFORM_URL = '{}/platform/v1'.format(cluster_domain)
 
         SUBSCRIPTION_TYPE_URL_MAPPINGS = {
