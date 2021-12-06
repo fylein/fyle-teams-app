@@ -50,7 +50,7 @@ class FyleAuthorisation(View):
 
             # Error when user declines Fyle authorization
             if error == 'access_denied':
-                error_message = 'Well.. if you do change your mind, visit the home tab and link your Fyle account to Teams to stay up to date on all your expense reports.'
+                error_message = 'Well.. if you do change your mind link your Fyle account to Teams to stay up to date on all your expense reports.'
 
             return await team_utils.send_message_to_user(
                 user_conversation_reference,
@@ -71,14 +71,22 @@ class FyleAuthorisation(View):
 
             else:
 
-                user = await User.link_fyle_account(code, user_id)
+                user, error_occured = await User.link_fyle_account(code, user_id)
 
-                post_auth_card = authorisation_card.get_post_auth_card()
+                if error_occured is True:
+                    message = 'Hey seems like an error occured while linking your *Fyle* account 🤕   Please try again in a while \n If the issues still persists, please contact support@fylehq.com'
 
-                await team_utils.send_message_to_user(
-                    user_conversation_reference,
-                    attachments=[CardFactory.adaptive_card(post_auth_card)]
-                )
+                    await team_utils.send_message_to_user(
+                        user_conversation_reference,
+                        message
+                    )
+                else:
+                    post_auth_card = authorisation_card.get_post_auth_card()
+
+                    await team_utils.send_message_to_user(
+                        user_conversation_reference,
+                        attachments=[CardFactory.adaptive_card(post_auth_card)]
+                    )
 
         redirect_url = 'https://teams.microsoft.com/l/chat/0/0?users=28:{}'.format(settings.TEAMS_APP_ID)
 

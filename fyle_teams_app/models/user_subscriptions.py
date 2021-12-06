@@ -42,6 +42,12 @@ class UserSubscription(models.Model):
 
 
     @staticmethod
+    @sync_to_async
+    def remove_user_subscriptions(team_user_id: str):
+        UserSubscription.objects.filter(team_user_id=team_user_id).delete()
+
+
+    @staticmethod
     async def create_notification_subscriptions(user, fyle_profile: Dict) -> None:
         access_token = await fyle_utils.get_fyle_access_token(user.fyle_refresh_token)
         cluster_domain = await fyle_utils.get_cluster_domain(access_token)

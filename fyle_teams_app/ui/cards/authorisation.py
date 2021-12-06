@@ -52,7 +52,7 @@ def get_post_auth_card() -> Dict:
                 "items": [
                     {
                         "type": "TextBlock",
-                        "text": "**Yaay 🎊. you've successfully linked Fyle to Microsoft Teams 🎊**\n\nWhat's next?\n\nIf you've submitted an expense report for approval, you'll receive real-time notifications on the Fyle Slack app whenever:\n\n• Your report gets approved ✅ \n\n• You receive your reimbursement 💰\n\n• A comment is made on the report 💬 \n\n• The report is sent back to you for further inquiry 🚫\n\nIf you're an approver, you'll see a direct message like below whenever your teammate submits a report to you for approval.\n",
+                        "text": "**Yaay 🎊. you've successfully linked Fyle to Microsoft Teams 🎊**\n\nWhat's next?\n\nIf you've submitted an expense report for approval, you'll receive real-time notifications on the Fyle Teams app whenever:\n\n• Your report gets approved ✅ \n\n• You receive your reimbursement 💰\n\n• A comment is made on the report 💬 \n\n• The report is sent back to you for further inquiry 🚫\n\nIf you're an approver, you'll see a direct message like below whenever your teammate submits a report to you for approval.\n",
                         "wrap": True
                     }
                 ]
