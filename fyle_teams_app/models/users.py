@@ -40,7 +40,7 @@ class User(models.Model):
     @staticmethod
     @sync_to_async
     def create_user(team_id: str, user_id: str, conversation_reference: Dict):
-        return User.objects.get_or_create(
+        return User.objects.create(
             team_id=team_id,
             team_user_id=user_id,
             team_user_conversation_reference=conversation_reference
@@ -49,7 +49,7 @@ class User(models.Model):
 
     @staticmethod
     @sync_to_async
-    def set_fyle_account_details(team_user_id: str, fyle_profile: Dict, fyle_refresh_token: str):
+    def set_user_details(team_user_id: str, fyle_profile: Dict, fyle_refresh_token: str):
         User.objects.filter(team_user_id=team_user_id).update(
             fyle_user_id=fyle_profile['user_id'],
             fyle_refresh_token=fyle_refresh_token,
@@ -60,7 +60,7 @@ class User(models.Model):
 
     @staticmethod
     @sync_to_async
-    def clear_fyle_account_details(team_user_id: str):
+    def clear_user_details(team_user_id: str):
         User.objects.filter(team_user_id=team_user_id).update(
             fyle_user_id=None,
             fyle_refresh_token=None,

@@ -55,7 +55,7 @@ class UserSubscription(models.Model):
         SUBSCRIPTON_WEBHOOK_DETAILS_MAPPING = {
             SubscriptionType.SPENDER: {
                 'role_required': 'FYLER',
-                'webhook_url': '{}/fyle/fyler/notifications'.format(settings.TEAMS_SERVICE_BASE_URL)
+                'webhook_url': '{}/fyle/spender/notifications'.format(settings.TEAMS_SERVICE_BASE_URL)
             },
             SubscriptionType.APPROVER: {
                 'role_required': 'APPROVER',
