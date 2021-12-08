@@ -1,7 +1,5 @@
 from typing import Dict
 
-import requests
-
 from fyle.platform import Platform
 
 from django.conf import settings
@@ -12,9 +10,9 @@ from fyle_teams_app.libs import http, assertions, utils
 FYLE_TOKEN_URL = '{}/oauth/token'.format(settings.FYLE_ACCOUNTS_URL)
 
 
-def get_fyle_sdk_connection(refresh_token: str) -> Platform:
-    access_token = get_fyle_access_token(refresh_token)
-    cluster_domain = get_cluster_domain(access_token)
+async def get_fyle_sdk_connection(refresh_token: str) -> Platform:
+    access_token = await get_fyle_access_token(refresh_token)
+    cluster_domain = await get_cluster_domain(access_token)
 
     FYLE_PLATFORM_URL = '{}/platform/v1'.format(cluster_domain)
 
@@ -27,20 +25,22 @@ def get_fyle_sdk_connection(refresh_token: str) -> Platform:
     )
 
 
-def get_cluster_domain(access_token: str) -> str:
+async def get_cluster_domain(access_token: str) -> str:
     cluster_domain_url = '{}/oauth/cluster'.format(settings.FYLE_ACCOUNTS_URL)
     headers = {
         'content-type': 'application/json',
         'Authorization': 'Bearer {}'.format(access_token)
     }
 
-    response = http.post(url=cluster_domain_url, headers=headers)
-    assertions.assert_valid(response.status_code == 200, 'Error fetching cluster domain')
+    response = await http.post(url=cluster_domain_url, headers=headers)
+    assertions.assert_valid(response.status == 200, 'Error fetching cluster domain')
 
-    return response.json()['cluster_domain']
+    response = await response.json()
+
+    return response['cluster_domain']
 
 
-def get_fyle_access_token(fyle_refresh_token: str) -> str:
+async def get_fyle_access_token(fyle_refresh_token: str) -> str:
     payload = {
         'grant_type': 'refresh_token',
         'refresh_token': fyle_refresh_token,
@@ -52,13 +52,15 @@ def get_fyle_access_token(fyle_refresh_token: str) -> str:
         'Content-Type': 'application/json'
     }
 
-    oauth_response = requests.post('{}/oauth/token'.format(settings.FYLE_ACCOUNTS_URL), json=payload, headers=headers)
-    assertions.assert_good(oauth_response.status_code == 200, 'Error fetching fyle token details')
+    oauth_response = await http.post('{}/oauth/token'.format(settings.FYLE_ACCOUNTS_URL), json=payload, headers=headers)
+    assertions.assert_good(oauth_response.status == 200, 'Error fetching fyle token details')
 
-    return oauth_response.json()['access_token']
+    oauth_response = await oauth_response.json()
+
+    return oauth_response['access_token']
 
 
-def get_fyle_refresh_token(code: str) -> str:
+async def get_fyle_refresh_token(code: str) -> str:
     FYLE_OAUTH_TOKEN_URL = '{}/oauth/token'.format(settings.FYLE_ACCOUNTS_URL)
 
     oauth_payload = {
@@ -68,21 +70,23 @@ def get_fyle_refresh_token(code: str) -> str:
         'code': code
     }
 
-    oauth_response = http.post(FYLE_OAUTH_TOKEN_URL, oauth_payload)
-    assertions.assert_good(oauth_response.status_code == 200, 'Error fetching fyle token details')
+    oauth_response = await http.post(FYLE_OAUTH_TOKEN_URL, oauth_payload)
+    assertions.assert_good(oauth_response.status == 200, 'Error fetching fyle token details')
 
-    return oauth_response.json()['refresh_token']
+    oauth_response = await oauth_response.json()
+
+    return oauth_response['refresh_token']
 
 
-def get_fyle_profile(refresh_token: str) -> Dict:
-    connection = get_fyle_sdk_connection(refresh_token)
+async def get_fyle_profile(refresh_token: str) -> Dict:
+    connection = await get_fyle_sdk_connection(refresh_token)
     fyle_profile_response = connection.v1beta.spender.my_profile.get()
     return fyle_profile_response['data']
 
 
-def get_fyle_resource_url(fyle_refresh_token: str, resource: Dict, resource_type: str) -> str:
-    access_token = get_fyle_access_token(fyle_refresh_token)
-    cluster_domain = get_cluster_domain(access_token)
+async def get_fyle_resource_url(fyle_refresh_token: str, resource: Dict, resource_type: str) -> str:
+    access_token = await get_fyle_access_token(fyle_refresh_token)
+    cluster_domain = await get_cluster_domain(access_token)
 
     RESOURCE_URL_MAPPING = {
         'REPORT': '{}/app/main/#/enterprise/reports'.format(cluster_domain),

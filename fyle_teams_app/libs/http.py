@@ -1,6 +1,7 @@
 from typing import Any, Callable, Dict, Tuple
 
 import json
+import aiohttp
 import requests
 
 from fyle_teams_app.libs import logger
@@ -9,20 +10,21 @@ from fyle_teams_app.libs import logger
 logger = logger.get_logger(__name__)
 
 
-def http_request(method: str, url: str, headers: Dict = None, **kwargs: Any) -> requests.Response:
+async def http_request(method: str, url: str, headers: Dict = None, **kwargs: Any) -> aiohttp.ClientResponse:
     headers = requests.structures.CaseInsensitiveDict(headers)
 
-    resp = requests.request(
-        method=method,
-        url=url,
-        headers=headers,
-        **kwargs
-    )
+    async with aiohttp.ClientSession() as session:
+        resp = await session.request(
+            method=method,
+            url=url,
+            headers=headers,
+            **kwargs
+        )
 
-    return resp
+        return resp
 
 
-def process_data_and_headers(data: Dict, headers: Dict) -> Tuple[Dict, Dict]:
+async def process_data_and_headers(data: Dict, headers: Dict) -> Tuple[Dict, Dict]:
     headers = requests.structures.CaseInsensitiveDict(headers)
 
     if isinstance(data, dict):
@@ -32,20 +34,20 @@ def process_data_and_headers(data: Dict, headers: Dict) -> Tuple[Dict, Dict]:
     return data, headers
 
 
-def post(url: str, data: Dict = None, headers: Dict = None, **kwargs: Any) -> Callable:
-    data, headers = process_data_and_headers(data, headers)
-    return http_request('POST', url, headers=headers, data=data, **kwargs)
+async def post(url: str, data: Dict = None, headers: Dict = None, **kwargs: Any) -> Callable:
+    data, headers = await process_data_and_headers(data, headers)
+    return await http_request('POST', url, headers=headers, data=data, **kwargs)
 
 
-def put(url: str, data: Dict = None, headers: Dict = None, **kwargs: Any) -> Callable:
-    data, headers = process_data_and_headers(data, headers)
-    return http_request('PUT', url, headers=headers, data=data, **kwargs)
+async def put(url: str, data: Dict = None, headers: Dict = None, **kwargs: Any) -> Callable:
+    data, headers = await process_data_and_headers(data, headers)
+    return await http_request('PUT', url, headers=headers, data=data, **kwargs)
 
 
-def get(url: str, *args: Any, **kwargs: Any) -> Callable:
+async def get(url: str, *args: Any, **kwargs: Any) -> Callable:
     kwargs.setdefault('allow_redirects', True)
-    return http_request('GET', url, **kwargs)
+    return await http_request('GET', url, **kwargs)
 
 
-def delete(url: str, *args: Any, **kwargs: Any) -> Callable:
-    return http_request('DELETE', url, **kwargs)
+async def delete(url: str, *args: Any, **kwargs: Any) -> Callable:
+    return await http_request('DELETE', url, **kwargs)
