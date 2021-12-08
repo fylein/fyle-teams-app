@@ -16,6 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from fyle_teams_app.server import TeamsView
+from fyle_teams_app.views.authorisation.fyle import FyleAuthorisation
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+
+    # Teams url
+    # path('teams/events', TeamsView.as_view()),
+    path('api/messages', TeamsView.as_view()),
+
+    # Fyle urls
+    path('fyle/authorisation', FyleAuthorisation.as_view())
 ]
