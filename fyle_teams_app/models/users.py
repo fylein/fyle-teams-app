@@ -80,7 +80,7 @@ class User(models.Model):
 
             fyle_profile = await fyle_utils.get_fyle_profile(fyle_refresh_token)
 
-            await User.set_fyle_account_details(team_user_id, fyle_profile, fyle_refresh_token)
+            await User.set_user_details(team_user_id, fyle_profile, fyle_refresh_token)
 
             user = await User.get_by_id(team_user_id)
 
@@ -89,7 +89,7 @@ class User(models.Model):
         except Exception as e:
             logger.error('Error while linking Fyle account %s', str(e))
             # Clear fyle acccount details if created
-            await User.clear_fyle_account_details(team_user_id)
+            await User.clear_user_details(team_user_id)
 
             error_occured = True
 
