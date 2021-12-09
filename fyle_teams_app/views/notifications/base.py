@@ -43,7 +43,9 @@ class FyleNotificationView(View):
         view._is_coroutine = asyncio.coroutines._is_coroutine
         return view
 
-    event_handlers: Dict = {}
+
+    notification_handlers: Dict = {}
+
 
     async def post(self, request: HttpRequest, webhook_id: str) -> JsonResponse:
         webhook_data = json.loads(request.body)
@@ -51,17 +53,17 @@ class FyleNotificationView(View):
         resource = webhook_data['resource']
         action = webhook_data['action']
 
-        # Constructing event in `<resource>_<action>` format
+        # Constructing notification type in `<resource>_<action>` format
         # This is equivalent to the notification types defined
-        event_type = '{}_{}'.format(resource, action)
+        notification_type = '{}_{}'.format(resource, action)
 
-        logger.info('Notification type received -> %s',  event_type)
+        logger.info('Notification type received -> %s',  notification_type)
 
-        self._initialize_event_handlers()
+        self.initialize_notification_handlers()
 
-        handler = self.event_handlers.get(event_type)
+        notification_handler = self.notification_handlers.get(notification_type)
 
-        if handler is not None:
+        if notification_handler is not None:
 
             user_subscription = await UserSubscription.get_by_webhook_id(webhook_id)
             assertions.assert_found(user_subscription, 'User subscription not found with webhook id: {}'.format(webhook_id))
@@ -72,6 +74,6 @@ class FyleNotificationView(View):
 
             user_conversation_reference = ConversationReference().from_dict(user.team_user_conversation_reference)
 
-            return await handler(webhook_data, user, user_conversation_reference)
+            return await notification_handler(webhook_data, user, user_conversation_reference)
 
         return JsonResponse({}, status=200)

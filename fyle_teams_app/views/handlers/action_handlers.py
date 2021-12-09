@@ -70,7 +70,7 @@ class ActionHandler:
                 try:
                     report = platform.v1beta.approver.reports.approve(report_id)
                     report = report['data']
-                    report_message = '**Expense Report Approved** ✅ '
+                    report_message = '**Expense Report Approved** 🚀 '
                 except platform_exceptions.PlatformError as e:
                     logger.error('Error while processing report approve -> %s', e)
 

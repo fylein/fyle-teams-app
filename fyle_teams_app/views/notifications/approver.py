@@ -13,8 +13,8 @@ from fyle_teams_app.ui.cards import notifications as notification_cards
 
 class FyleApproverNotification(FyleNotificationView):
 
-    def _initialize_event_handlers(self) -> None:
-        self.event_handlers = {
+    def initialize_notification_handlers(self) -> None:
+        self.notification_handlers = {
             NotificationType.REPORT_SUBMITTED.value: self.handle_report_submitted
         }
 
