@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Tuple
 
 from fyle.platform import Platform
 
@@ -84,13 +84,11 @@ async def get_fyle_profile(refresh_token: str) -> Dict:
     return fyle_profile_response['data']
 
 
-async def get_fyle_resource_url(fyle_refresh_token: str, resource: Dict, resource_type: str) -> str:
-    access_token = await get_fyle_access_token(fyle_refresh_token)
-    cluster_domain = await get_cluster_domain(access_token)
+def get_fyle_resource_url(resource: Dict, resource_type: str) -> str:
 
     RESOURCE_URL_MAPPING = {
-        'REPORT': '{}/app/main/#/enterprise/reports'.format(cluster_domain),
-        'EXPENSE': '{}/app/main/#/enterprise/view_expense'.format(cluster_domain)
+        'REPORT': '{}/app/main/#/enterprise/reports'.format(settings.FYLE_APP_URL),
+        'EXPENSE': '{}/app/main/#/enterprise/view_expense'.format(settings.FYLE_APP_URL)
     }
 
     resource_base_url = RESOURCE_URL_MAPPING[resource_type]
@@ -127,3 +125,37 @@ def get_fyle_oauth_url(user_id: str, team_id: str) -> str:
     )
 
     return FYLE_OAUTH_URL
+
+
+def can_approve_report(report: Dict, approver_user_id: str) -> Tuple[bool, str]:
+
+    report_approved_states = ['APPROVED', 'PAYMENT_PENDING', 'PAYMENT_PROCESSING', 'PAID']
+
+    report_message = None
+    can_approve_report = True
+
+    if report['state'] == 'APPROVER_INQUIRY':
+        can_approve_report = False
+        report_message = 'This expense report has been sent back to the employee'
+
+    elif report['state'] in report_approved_states:
+        can_approve_report = False
+        report_message = 'This expense report has already been approved ✅ '
+
+    elif can_approve_report is True:
+
+        for approver in report['approvals']:
+
+            if approver['approver_user_id'] == approver_user_id:
+
+                if approver['state'] == 'APPROVAL_DONE':
+                    can_approve_report = False
+                    report_message = 'Looks like you\'ve already approved this expense report 🙈'
+                    break
+
+                if approver['state'] == 'APPROVAL_DISABLED':
+                    can_approve_report = False
+                    report_message = 'Looks like you no longer have permission to approve this expense report 🙈'
+                    break
+
+    return can_approve_report, report_message

@@ -66,12 +66,12 @@ class FyleNotificationView(View):
             user_subscription = await UserSubscription.get_by_webhook_id(webhook_id)
             assertions.assert_found(user_subscription, 'User subscription not found with webhook id: {}'.format(webhook_id))
 
-            teams_user_id = user_subscription.teams_user_id
+            teams_user_id = user_subscription.team_user_id
 
             user = await User.get_by_id(teams_user_id)
 
             user_conversation_reference = ConversationReference().from_dict(user.team_user_conversation_reference)
 
-            return handler(webhook_data, user, user_conversation_reference)
+            return await handler(webhook_data, user, user_conversation_reference)
 
         return JsonResponse({}, status=200)

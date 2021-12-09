@@ -53,7 +53,7 @@ class TeamsView(View):
             response = await ADAPTER.process_activity(activity, auth_header, FyleBot().on_turn)
 
             if response:
-                return JsonResponse(response.body, status=response.status)
+                return JsonResponse(response.body, status=response.status, safe=False)
 
             return JsonResponse({}, status=201)
         except Exception as exception:

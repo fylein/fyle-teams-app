@@ -18,6 +18,7 @@ from django.urls import path
 
 from fyle_teams_app.server import TeamsView
 from fyle_teams_app.views.authorisation.fyle import FyleAuthorisation
+from fyle_teams_app.views.notifications.approver import FyleApproverNotification
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,5 +28,7 @@ urlpatterns = [
     path('api/messages', TeamsView.as_view()),
 
     # Fyle urls
-    path('fyle/authorisation', FyleAuthorisation.as_view())
+    path('fyle/authorisation', FyleAuthorisation.as_view()),
+
+    path('fyle/approver/notifications/<str:webhook_id>', FyleApproverNotification.as_view()),
 ]
