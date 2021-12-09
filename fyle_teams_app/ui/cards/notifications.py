@@ -10,6 +10,7 @@ expenses = [
         'seq_num': 'E/2021/11/T/15',
         'id': 'tx4whV8C1GGo',
         'org_id': 'abcd234',
+        'spent_at': '2020-06-01T13:14:54.804+00:00',
         'category': {
             'name': 'Internet'
         },
@@ -21,6 +22,7 @@ expenses = [
         'seq_num': 'E/2021/11/T/15',
         'id': 'tx4whV8C1GG1',
         'org_id': 'abcd234',
+        'spent_at': '2020-06-01T13:14:54.804+00:00',
         'category': {
             'name': 'Taxi'
         },
@@ -47,7 +49,7 @@ def get_report_approval_card(report: Dict, message: str = None, can_approve_repo
                     'items': [
                         {
                             'type': 'TextBlock',
-                            'text': '**Amount**',
+                            'text': '**Date of Spend**',
                             'wrap': True
                         }
                     ]
@@ -80,7 +82,7 @@ def get_report_approval_card(report: Dict, message: str = None, can_approve_repo
                     'items': [
                         {
                             'type': 'TextBlock',
-                            'text': '**Expense ID**',
+                            'text': '**Amount**',
                             'wrap': True
                         }
                     ]
@@ -107,7 +109,7 @@ def get_report_approval_card(report: Dict, message: str = None, can_approve_repo
                     'items': [
                         {
                             'type': 'TextBlock',
-                            'text': '{} {}'.format(expense['currency'], expense['amount']),
+                            'text': '{}'.format(utils.get_formatted_datetime(expense['spent_at'], '%B %d, %Y')),
                             'wrap': True
                         }
                     ]
@@ -140,7 +142,7 @@ def get_report_approval_card(report: Dict, message: str = None, can_approve_repo
                     'items': [
                         {
                             'type': 'TextBlock',
-                            'text': '[{}]({})'.format(expense['seq_num'], fyle_utils.get_fyle_resource_url(expense, 'EXPENSE')),
+                            'text': '{} {}'.format(expense['currency'], expense['amount']),
                             'wrap': True
                         }
                     ]
