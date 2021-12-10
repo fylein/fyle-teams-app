@@ -323,3 +323,119 @@ def get_report_approval_card(report: Dict, message: str = None, can_approve_repo
         report_approval_card['body'][-1]['items'][0]['actions'].insert(0, approve_action)
 
     return report_approval_card
+
+
+def get_report_details_card(report: Dict, headline_text: str) -> Dict:
+
+    report_details_card = {
+        'type': 'AdaptiveCard',
+        'body': [
+            {
+                'type': 'Container',
+                'style': 'emphasis',
+                'items': [
+                    {
+                        'type': 'ColumnSet',
+                        'columns': [
+                            {
+                                'type': 'Column',
+                                'items': [
+                                    {
+                                        'type': 'TextBlock',
+                                        'size': 'medium',
+                                        'weight': 'bolder',
+                                        'text': headline_text,
+                                        'wrap': True
+                                    }
+                                ],
+                                'width': 'stretch'
+                            }
+                        ]
+                    }
+                ],
+                'bleed': True
+            },
+            {
+                'type': 'Container',
+                'items': [
+                    {
+                        'type': 'FactSet',
+                        'spacing': 'Large',
+                        'facts': [
+                            {
+                                'title': 'Report Name',
+                                'value': '{}'.format(report['purpose'])
+                            },
+                            {
+                                'title': 'Amount',
+                                'value': '{} {}'.format(report['currency'], report['amount'])
+                            },
+                            {
+                                'title': 'Number of expenses',
+                                'value': '{}'.format(report['num_expenses'])
+                            },
+                            {
+                                'title': 'Submitted On',
+                                'value': '{}'.format(utils.get_formatted_datetime(report['last_submitted_at'], '%B %d, %Y'))
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                'type': 'Container',
+                'items': [
+                    {
+                        'type': 'ActionSet',
+                        'actions': [
+                            {
+                                'type': 'Action.OpenUrl',
+                                'title': 'View in Fyle',
+                                'url': '{}'.format(fyle_utils.get_fyle_resource_url(report, 'REPORT'))
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        '$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',
+        'version': '1.4',
+        'fallbackText': 'This card requires Adaptive Cards v1.2 support to be rendered properly.',
+        'verticalContentAlignment': 'Center'
+    }
+
+    return report_details_card
+
+
+
+def get_report_approved_card(report: Dict) -> Dict:
+
+    headline_text = '✅   Your expense report [[{}]]({}) has been approved'.format(
+        report['seq_num'],
+        fyle_utils.get_fyle_resource_url(report, 'REPORT')
+    )
+    report_approved_card = get_report_details_card(report, headline_text)
+
+    return report_approved_card
+
+
+def get_report_payment_processing_card(report: Dict) -> Dict:
+
+    headline_text = '💰  Payment is being processed for your expense report [[{}]]({})'.format(
+        report['seq_num'],
+        fyle_utils.get_fyle_resource_url(report, 'REPORT')
+    )
+    report_payment_processing_card = get_report_details_card(report, headline_text)
+
+    return report_payment_processing_card
+
+
+def get_report_paid_card(report: Dict) -> Dict:
+
+    headline_text = '💵  Reimbursement for your expense report [[{}]]({}) is here!'.format(
+        report['seq_num'],
+        fyle_utils.get_fyle_resource_url(report, 'REPORT')
+    )
+    report_paid_card = get_report_details_card(report, headline_text)
+
+    return report_paid_card
