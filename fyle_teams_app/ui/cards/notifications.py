@@ -407,6 +407,126 @@ def get_report_details_card(report: Dict, headline_text: str) -> Dict:
     return report_details_card
 
 
+def get_expense_details_card(expense: Dict, headline_text: str) -> Dict:
+
+    category = expense['category']['name']
+    sub_category = expense['category']['sub_category']
+
+    if sub_category is not None and category != sub_category:
+        category = '{} / {}'.format(category, sub_category)
+
+    currency = expense['currency']
+    amount =  expense['amount']
+
+    amount_details = '*Amount:*\n {} {}'.format(currency, amount)
+
+    # If foreign currency exists, then show foreign amount and currency
+    if expense['foreign_currency'] is not None:
+        foreign_currency = expense['foreign_currency']
+        foreign_amount =  expense['foreign_amount']
+
+        amount_details = '{} \n ({} {})'.format(amount_details, foreign_currency, foreign_amount)
+
+    expense_details_card = {
+        'type': 'AdaptiveCard',
+        'body': [
+            {
+                'type': 'Container',
+                'style': 'emphasis',
+                'items': [
+                    {
+                        'type': 'ColumnSet',
+                        'columns': [
+                            {
+                                'type': 'Column',
+                                'items': [
+                                    {
+                                        'type': 'TextBlock',
+                                        'size': 'medium',
+                                        'weight': 'bolder',
+                                        'text': headline_text,
+                                        'wrap': True
+                                    }
+                                ],
+                                'width': 'stretch'
+                            }
+                        ]
+                    }
+                ],
+                'bleed': True
+            },
+            {
+                'type': 'Container',
+                'items': [
+                    {
+                        'type': 'FactSet',
+                        'spacing': 'Large',
+                        'facts': [
+                            {
+                                'title': 'Amount',
+                                'value': '{}'.format(amount_details)
+                            },
+                            {
+                                'title': 'Category',
+                                'value': '{}'.format(category)
+                            },
+                            {
+                                'title': 'Spent at',
+                                'value': '{}'.format(utils.get_formatted_datetime(expense['spent_at'], '%B %d, %Y'))
+                            },
+                            {
+                                'title': 'Purpose',
+                                'value': '{}'.format(expense['purpose'])
+                            },
+                            {
+                                'title': 'Merchant',
+                                'value': '{}'.format(expense['merchant'])
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                'type': 'Container',
+                'items': [
+                    {
+                        'type': 'ActionSet',
+                        'actions': [
+                            {
+                                'type': 'Action.OpenUrl',
+                                'title': 'View in Fyle',
+                                'url': '{}'.format(fyle_utils.get_fyle_resource_url(expense, 'EXPENSE'))
+                            }
+                        ]
+                    }
+                ],
+                'style': 'default'
+            }
+        ],
+        '$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',
+        'version': '1.4',
+        'fallbackText': 'This card requires Adaptive Cards v1.2 support to be rendered properly.',
+        'verticalContentAlignment': 'Center'
+    }
+
+    project = expense['project']
+
+    if project is not None:
+        project = expense['project']['name']
+        sub_project = expense['project']['sub_project']
+
+        if sub_project is not None:
+            project = '{} / {}'.format(project, sub_project)
+
+        project_section = {
+            'title': 'Project',
+            'value': project
+        }
+
+        expense_details_card['body'][1]['items'][0]['facts'].insert(1, project_section)
+
+    return expense_details_card
+
 
 def get_report_approved_card(report: Dict) -> Dict:
 
@@ -439,3 +559,106 @@ def get_report_paid_card(report: Dict) -> Dict:
     report_paid_card = get_report_details_card(report, headline_text)
 
     return report_paid_card
+
+
+def get_report_send_back_card(report: Dict, report_sendback_reason: str) -> Dict:
+
+    headline_text = '🚫     {} ({}) sent back your expense report [[{}]]({})'.format(
+        report['updated_by_user']['full_name'],
+        report['updated_by_user']['email'],
+        report['seq_num'],
+        fyle_utils.get_fyle_resource_url(report, 'REPORT')
+    )
+    report_send_back_card = get_report_details_card(report, headline_text)
+
+    report_sendback_reason = report_sendback_reason.replace('reason for sending back report: ', '')
+
+    report_reason_section = {
+        'type': 'Container',
+        'style': 'warning',
+        'bleed': True,
+        'items': [
+            {
+                'type': 'TextBlock',
+                'text': '**Reason for sending back report:**',
+                'wrap': True
+            },
+            {
+                'type': 'TextBlock',
+                'text': report_sendback_reason,
+                'wrap': True
+            }
+        ]
+    }
+
+    report_send_back_card['body'][1]['items'].insert(0, report_reason_section)
+
+    return report_send_back_card
+
+
+def get_report_commented_card(report: Dict, report_comment: str) -> Dict:
+
+    headline_text = '💬  {} ({}) commented on your expense report [[{}]]({})'.format(
+        report['updated_by_user']['full_name'],
+        report['updated_by_user']['email'],
+        report['seq_num'],
+        fyle_utils.get_fyle_resource_url(report, 'REPORT')
+    )
+    report_commented_card = get_report_details_card(report, headline_text)
+
+    report_reason_section = {
+        'type': 'Container',
+        'style': 'accent',
+        'bleed': True,
+        'items': [
+            {
+                'type': 'TextBlock',
+                'text': '**Comment:**',
+                'wrap': True
+            },
+            {
+                'type': 'TextBlock',
+                'text': report_comment,
+                'wrap': True
+            }
+        ]
+    }
+
+    report_commented_card['body'][1]['items'].insert(0, report_reason_section)
+
+    return report_commented_card
+
+
+def get_expense_commented_card(expense: Dict, expense_comment: str) -> Dict:
+
+    headline_text = '💬  {} ({}) commented on your expense report [[{}]]({})'.format(
+        expense['updated_by_user']['full_name'],
+        expense['updated_by_user']['email'],
+        expense['seq_num'],
+        fyle_utils.get_fyle_resource_url(expense, 'EXPENSE')
+    )
+
+    expense_comment_card = get_expense_details_card(expense, headline_text)
+
+    expense_comment_section = {
+        'type': 'Container',
+        'style': 'accent',
+        'bleed': True,
+        'separator': True,
+        'items': [
+            {
+                'type': 'TextBlock',
+                'text': '**Comment:**',
+                'wrap': True
+            },
+            {
+                'type': 'TextBlock',
+                'text': expense_comment,
+                'wrap': True
+            }
+        ]
+    }
+
+    expense_comment_card['body'][1]['items'].insert(0, expense_comment_section)
+
+    return expense_comment_card

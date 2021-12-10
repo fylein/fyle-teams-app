@@ -17,9 +17,9 @@ class FyleFylerNotification(FyleNotificationView):
         self.notification_handlers = {
             NotificationType.REPORT_PARTIALLY_APPROVED.value: self.handle_report_partially_approved,
             NotificationType.REPORT_PAYMENT_PROCESSING.value: self.handle_report_payment_processing,
-            # NotificationType.REPORT_APPROVER_SENDBACK.value: self.handle_report_approver_sendback,
-            # NotificationType.REPORT_COMMENTED.value: self.handle_report_commented,
-            # NotificationType.EXPENSE_COMMENTED.value: self.handle_expense_commented,
+            NotificationType.REPORT_APPROVER_SENDBACK.value: self.handle_report_approver_sendback,
+            NotificationType.REPORT_COMMENTED.value: self.handle_report_commented,
+            NotificationType.EXPENSE_COMMENTED.value: self.handle_expense_commented,
             NotificationType.REPORT_PAID.value: self.handle_report_paid
         }
 
@@ -52,56 +52,58 @@ class FyleFylerNotification(FyleNotificationView):
         return JsonResponse({}, status=200)
 
 
-    # def handle_report_approver_sendback(self, webhook_data: Dict, user: User, user_conversation_reference: ConversationReference) -> JsonResponse:
+    async def handle_report_approver_sendback(self, webhook_data: Dict, user: User, user_conversation_reference: ConversationReference) -> JsonResponse:
 
-    #     report = webhook_data['data']
+        report = webhook_data['data']
 
-    #     report_sendback_reason = webhook_data['reason']
+        report_sendback_reason = webhook_data['reason']
 
-    #     report_notification_message, title_text = notification_messages.get_report_approver_sendback_notification(
-    #         report,
-    #         report_url,
-    #         report_sendback_reason
-    #     )
+        report_sendback_card = notification_cards.get_report_send_back_card(report, report_sendback_reason)
 
-    #     return JsonResponse({}, status=200)
+        await team_utils.send_message_to_user(
+            conversation_reference=user_conversation_reference,
+            attachments=[CardFactory.adaptive_card(report_sendback_card)]
+        )
 
-
-    # def handle_report_commented(self, webhook_data: Dict, user: User, user_conversation_reference: ConversationReference) -> JsonResponse:
-
-    #     report = webhook_data['data']
-
-    #     # Send comment notification only if the commenter is not SYSTEM and not the user itself
-    #     if report['updated_by_user']['id'] not in ['SYSTEM', report['user']['id']]:
+        return JsonResponse({}, status=200)
 
 
-    #         report_comment = webhook_data['reason']
+    async def handle_report_commented(self, webhook_data: Dict, user: User, user_conversation_reference: ConversationReference) -> JsonResponse:
 
-    #         report_notification_message, title_text = notification_messages.get_report_commented_notification(report, user_display_name, report_url, report_comment)
+        report = webhook_data['data']
+
+        # Send comment notification only if the commenter is not SYSTEM and not the user itself
+        if report['updated_by_user']['id'] not in ['SYSTEM', report['user']['id']]:
+
+            report_comment = webhook_data['reason']
+
+            report_commented_card = notification_cards.get_report_commented_card(report, report_comment)
+
+            await team_utils.send_message_to_user(
+                conversation_reference=user_conversation_reference,
+                attachments=[CardFactory.adaptive_card(report_commented_card)]
+            )
+
+        return JsonResponse({}, status=200)
 
 
-    #     return JsonResponse({}, status=200)
+    async def handle_expense_commented(self, webhook_data: Dict, user: User, user_conversation_reference: ConversationReference) -> JsonResponse:
 
+        expense = webhook_data['data']
 
-    # def handle_expense_commented(self, webhook_data: Dict, user: User, user_conversation_reference: ConversationReference) -> JsonResponse:
+        # Send comment notification only if the commenter is not SYSTEM and not the user itself
+        if expense['updated_by_user']['id'] not in ['SYSTEM', expense['employee']['user']['id']]:
 
-    #     expense = webhook_data['data']
+            expense_comment = webhook_data['reason']
 
-    #     # Send comment notification only if the commenter is not SYSTEM and not the user itself
-    #     if expense['updated_by_user']['id'] not in ['SYSTEM', expense['employee']['user']['id']]:
+            expense_commented_card = notification_cards.get_expense_commented_card(expense, expense_comment)
 
-    #         expense_url = fyle_utils.get_fyle_resource_url(user.fyle_refresh_token, expense, 'EXPENSE')
+            await team_utils.send_message_to_user(
+                conversation_reference=user_conversation_reference,
+                attachments=[CardFactory.adaptive_card(expense_commented_card)]
+            )
 
-    #         expense_comment = webhook_data['reason']
-
-    #         user_display_name = slack_utils.get_user_display_name(
-    #             slack_client,
-    #             expense['updated_by_user']
-    #         )
-
-    #         expense_notification_message, title_text = notification_messages.get_expense_commented_notification(expense, user_display_name, expense_url, expense_comment)
-
-    #     return JsonResponse({}, status=200)
+        return JsonResponse({}, status=200)
 
 
     async def handle_report_paid(self, webhook_data: Dict, user: User, user_conversation_reference: ConversationReference) -> JsonResponse:
