@@ -631,7 +631,7 @@ def get_report_commented_card(report: Dict, report_comment: str) -> Dict:
 
 def get_expense_commented_card(expense: Dict, expense_comment: str) -> Dict:
 
-    headline_text = '💬  {} ({}) commented on your expense report [[{}]]({})'.format(
+    headline_text = '💬  {} ({}) commented on your expense [[{}]]({})'.format(
         expense['updated_by_user']['full_name'],
         expense['updated_by_user']['email'],
         expense['seq_num'],
