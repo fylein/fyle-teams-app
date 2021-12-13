@@ -142,7 +142,7 @@ LOGGING = {
             'style': '{',
         },
         'requests': {
-            'format': 'request {levelname} %s {message}' % 'fyle-teams-service',
+            'format': 'request {levelname} %s {asctime} {message}' % 'fyle-teams-service',
             'style': '{'
         }
     },
@@ -177,7 +177,12 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': False
         },
-        'uvicron': {
+        'uvicorn': {
+            'handlers': ['request_logs'],
+            'level': 'INFO',
+            'propagate': False
+        },
+        'gunicorn': {
             'handlers': ['request_logs'],
             'level': 'INFO',
             'propagate': False
