@@ -25,8 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Teams url
-    # path('teams/events', TeamsView.as_view()),
-    path('api/messages', TeamsView.as_view()),
+    path('teams/events', TeamsView.as_view()),
 
     # Fyle urls
     path('fyle/authorisation', FyleAuthorisation.as_view()),
