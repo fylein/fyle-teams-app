@@ -591,7 +591,13 @@ def get_report_approval_state_section(report: Dict) -> Dict:
     }
 
     if is_report_fully_approved is False:
-        report_approval_state_section['items'][0]['columns'].append(report_approval_pending_from_section)
+        report_approval_state_section['items'][0]['columns'].append(
+            {
+                'type': 'Column',
+                'width': 'stretch',
+                'items': report_approval_pending_from_section
+            }
+        )
 
 
     return report_approval_state_section
