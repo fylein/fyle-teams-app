@@ -528,6 +528,76 @@ def get_expense_details_card(expense: Dict, headline_text: str) -> Dict:
     return expense_details_card
 
 
+def get_report_approval_state_section(report: Dict) -> Dict:
+    is_report_fully_approved = True
+
+    report_approved_by_section = []
+    report_approved_by_section.append(
+        {
+            'type': 'TextBlock',
+            'text': '**Approved by:**',
+            'wrap': True
+        }
+    )
+
+    report_approval_pending_from_section = []
+    report_approval_pending_from_section.append(
+        {
+            'type': 'TextBlock',
+            'text': '**Approval pending from:**',
+            'wrap': True
+        }
+    )
+
+    for approval in report['approvals']:
+        approver_full_name = approval['approver_user']['full_name']
+        approver_email = approval['approver_user']['email']
+
+        if approval['state'] == 'APPROVAL_DONE':
+            report_approved_by_section.append(
+                {
+                    'type': 'TextBlock',
+                    'text': '{} ({})'.format(approver_full_name, approver_email),
+                    'wrap': True
+                }
+            )
+
+        if approval['state'] == 'APPROVAL_PENDING':
+            report_approval_pending_from_section.append(
+                {
+                    'type': 'TextBlock',
+                    'text': '{} ({})'.format(approver_full_name, approver_email),
+                    'wrap': True
+                }
+            )
+            is_report_fully_approved = False
+
+    report_approval_state_section = {
+        'type': 'Container',
+        'items': [
+            {
+                'type': 'ColumnSet',
+                'columns': [
+                    {
+                        'type': 'Column',
+                        'width': 'stretch',
+                        'items': report_approved_by_section
+                    }
+                ]
+            }
+        ],
+        'style': 'emphasis',
+        'bleed': True
+    }
+
+    if is_report_fully_approved is False:
+        report_approval_state_section['items'][0]['columns'].append(report_approval_pending_from_section)
+
+
+    return report_approval_state_section
+
+
+
 def get_report_approved_card(report: Dict) -> Dict:
 
     headline_text = '✅   Your expense report [[{}]]({}) has been approved'.format(
@@ -535,6 +605,9 @@ def get_report_approved_card(report: Dict) -> Dict:
         fyle_utils.get_fyle_resource_url(report, 'REPORT')
     )
     report_approved_card = get_report_details_card(report, headline_text)
+    report_approval_state_section = get_report_approval_state_section(report)
+
+    report_approved_card['body'][1]['items'].append(report_approval_state_section)
 
     return report_approved_card
 
