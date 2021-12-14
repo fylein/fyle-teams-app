@@ -1,6 +1,7 @@
 from typing import Dict
 
 from fyle_teams_app.libs import utils, fyle_utils
+from fyle_teams_app.libs.fyle_utils import ReportState, FyleResourceType
 
 
 expenses = [
@@ -206,7 +207,7 @@ def get_report_approval_card(report: Dict, message: str = None, can_approve_repo
                         'spacing': 'Small',
                         'size': 'Small',
                         'weight': 'Bolder',
-                        'text': '[[{}]]({})'.format(report['seq_num'], fyle_utils.get_fyle_resource_url(report, 'REPORT')),
+                        'text': '[[{}]]({})'.format(report['seq_num'], fyle_utils.get_fyle_resource_url(report, FyleResourceType.REPORT.value)),
                         'wrap': True
                     },
                     {
@@ -290,7 +291,7 @@ def get_report_approval_card(report: Dict, message: str = None, can_approve_repo
                             {
                                 'type': 'Action.OpenUrl',
                                 'title': 'View in Fyle',
-                                'url': '{}'.format(fyle_utils.get_fyle_resource_url(report, 'REPORT'))
+                                'url': '{}'.format(fyle_utils.get_fyle_resource_url(report, FyleResourceType.REPORT.value))
                             }
                         ]
                     }
@@ -391,7 +392,7 @@ def get_report_details_card(report: Dict, headline_text: str) -> Dict:
                             {
                                 'type': 'Action.OpenUrl',
                                 'title': 'View in Fyle',
-                                'url': '{}'.format(fyle_utils.get_fyle_resource_url(report, 'REPORT'))
+                                'url': '{}'.format(fyle_utils.get_fyle_resource_url(report, FyleResourceType.REPORT.value))
                             }
                         ]
                     }
@@ -418,7 +419,7 @@ def get_expense_details_card(expense: Dict, headline_text: str) -> Dict:
     currency = expense['currency']
     amount =  expense['amount']
 
-    amount_details = '*Amount:*\n {} {}'.format(currency, amount)
+    amount_details = '{} {}'.format(currency, amount)
 
     # If foreign currency exists, then show foreign amount and currency
     if expense['foreign_currency'] is not None:
@@ -495,7 +496,7 @@ def get_expense_details_card(expense: Dict, headline_text: str) -> Dict:
                             {
                                 'type': 'Action.OpenUrl',
                                 'title': 'View in Fyle',
-                                'url': '{}'.format(fyle_utils.get_fyle_resource_url(expense, 'EXPENSE'))
+                                'url': '{}'.format(fyle_utils.get_fyle_resource_url(expense, FyleResourceType.EXPENSE.value))
                             }
                         ]
                     }
@@ -553,7 +554,7 @@ def get_report_approval_state_section(report: Dict) -> Dict:
         approver_full_name = approval['approver_user']['full_name']
         approver_email = approval['approver_user']['email']
 
-        if approval['state'] == 'APPROVAL_DONE':
+        if approval['state'] == ReportState.APPROVAL_DONE.value:
             report_approved_by_section.append(
                 {
                     'type': 'TextBlock',
@@ -562,7 +563,7 @@ def get_report_approval_state_section(report: Dict) -> Dict:
                 }
             )
 
-        if approval['state'] == 'APPROVAL_PENDING':
+        if approval['state'] == ReportState.APPROVER_PENDING.value:
             report_approval_pending_from_section.append(
                 {
                     'type': 'TextBlock',
@@ -608,7 +609,7 @@ def get_report_approved_card(report: Dict) -> Dict:
 
     headline_text = '✅   Your expense report [[{}]]({}) has been approved'.format(
         report['seq_num'],
-        fyle_utils.get_fyle_resource_url(report, 'REPORT')
+        fyle_utils.get_fyle_resource_url(report, FyleResourceType.REPORT.value)
     )
     report_approved_card = get_report_details_card(report, headline_text)
     report_approval_state_section = get_report_approval_state_section(report)
@@ -622,7 +623,7 @@ def get_report_payment_processing_card(report: Dict) -> Dict:
 
     headline_text = '💰  Payment is being processed for your expense report [[{}]]({})'.format(
         report['seq_num'],
-        fyle_utils.get_fyle_resource_url(report, 'REPORT')
+        fyle_utils.get_fyle_resource_url(report, FyleResourceType.REPORT.value)
     )
     report_payment_processing_card = get_report_details_card(report, headline_text)
 
@@ -633,7 +634,7 @@ def get_report_paid_card(report: Dict) -> Dict:
 
     headline_text = '💵  Reimbursement for your expense report [[{}]]({}) is here!'.format(
         report['seq_num'],
-        fyle_utils.get_fyle_resource_url(report, 'REPORT')
+        fyle_utils.get_fyle_resource_url(report, FyleResourceType.REPORT.value)
     )
     report_paid_card = get_report_details_card(report, headline_text)
 
@@ -646,7 +647,7 @@ def get_report_send_back_card(report: Dict, report_sendback_reason: str) -> Dict
         report['updated_by_user']['full_name'],
         report['updated_by_user']['email'],
         report['seq_num'],
-        fyle_utils.get_fyle_resource_url(report, 'REPORT')
+        fyle_utils.get_fyle_resource_url(report, FyleResourceType.REPORT.value)
     )
     report_send_back_card = get_report_details_card(report, headline_text)
 
@@ -681,7 +682,7 @@ def get_report_commented_card(report: Dict, report_comment: str) -> Dict:
         report['updated_by_user']['full_name'],
         report['updated_by_user']['email'],
         report['seq_num'],
-        fyle_utils.get_fyle_resource_url(report, 'REPORT')
+        fyle_utils.get_fyle_resource_url(report, FyleResourceType.REPORT.value)
     )
     report_commented_card = get_report_details_card(report, headline_text)
 
@@ -714,7 +715,7 @@ def get_expense_commented_card(expense: Dict, expense_comment: str) -> Dict:
         expense['updated_by_user']['full_name'],
         expense['updated_by_user']['email'],
         expense['seq_num'],
-        fyle_utils.get_fyle_resource_url(expense, 'EXPENSE')
+        fyle_utils.get_fyle_resource_url(expense, FyleResourceType.EXPENSE.value)
     )
 
     expense_comment_card = get_expense_details_card(expense, headline_text)
