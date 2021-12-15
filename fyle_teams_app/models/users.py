@@ -2,9 +2,12 @@ from typing import Dict
 
 from asgiref.sync import sync_to_async
 
+from botbuilder.schema.teams import TeamsChannelAccount
+
 from django.db import models
 
 from fyle_teams_app.libs import utils, fyle_utils, logger
+from fyle_teams_app.libs.tracking import Tracking
 from fyle_teams_app.models.user_subscriptions import UserSubscription
 
 
@@ -86,6 +89,8 @@ class User(models.Model):
 
             await UserSubscription.create_notification_subscriptions(user, fyle_profile)
 
+            User.track_fyle_account_linked(user, fyle_profile)
+
         except Exception as e:
             logger.error('Error while linking Fyle account %s', str(e))
             # Clear fyle acccount details if created
@@ -94,3 +99,32 @@ class User(models.Model):
             error_occured = True
 
         return user, error_occured
+
+
+    @staticmethod
+    def track_fyle_account_linked(user, fyle_profile: Dict) -> None:
+        event_data = {
+            'teams_user_id': user.team_user_id,
+            'fyle_user_id': user.fyle_user_id,
+            'email': user.email,
+            'team_id': user.team_id,
+            'fyle_roles': fyle_profile['roles']
+        }
+
+        tracking = Tracking(user.email)
+
+        tracking.track_event(user.email, 'Fyle Account Linked To Teams', event_data)
+
+
+    @staticmethod
+    def track_bot_installed(user_details: TeamsChannelAccount):
+        event_data = {
+            'user_id': user_details.id,
+            'team_id': user_details.tenant_id,
+            'email': user_details.email,
+            'name': user_details.name
+        }
+
+        tracking = Tracking(user_details.email)
+
+        tracking.track_event(user_details.email, 'Teams Bot Installed', event_data)
