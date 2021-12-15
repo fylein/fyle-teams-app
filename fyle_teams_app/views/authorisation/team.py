@@ -1,4 +1,5 @@
 from botbuilder.core import TurnContext, CardFactory
+from botbuilder.core.teams import TeamsInfo
 from botbuilder.schema import Activity
 
 from fyle_teams_app.models import User
@@ -29,6 +30,10 @@ class TeamAuthorisation:
         FYLE_OAUTH_URL = fyle_utils.get_fyle_oauth_url(user_id, team_id)
 
         pre_auth_card = authorisation_card.get_pre_auth_card(FYLE_OAUTH_URL)
+
+        user_details = await TeamsInfo.get_member(turn_context, user_id)
+
+        User.track_bot_installed(user_details)
 
         return await turn_context.send_activity(
             Activity(
