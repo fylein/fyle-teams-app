@@ -41,6 +41,7 @@ class TeamsView(View):
 
         if 'application/json' in request.headers['Content-Type']:
             body = json.loads(request.body.decode('utf-8'))
+            print('BODY -> ', body)
         else:
             return JsonResponse({}, status=415)
 
