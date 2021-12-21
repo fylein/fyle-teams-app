@@ -2,8 +2,8 @@ from typing import Dict, List
 
 import enum
 import uuid
-import aiohttp
 import asyncio
+import aiohttp
 
 
 from asgiref.sync import sync_to_async
@@ -11,7 +11,7 @@ from asgiref.sync import sync_to_async
 from django.db import models
 from django.conf import settings
 
-from fyle_teams_app.libs import fyle_utils, logger, assertions, http
+from fyle_teams_app.libs import fyle_utils, logger, assertions, http, utils
 
 
 class SubscriptionType(enum.Enum):
@@ -34,6 +34,11 @@ class UserSubscription(models.Model):
     def __str__(self) -> str:
         return '{} - {}'.format(self.team_user.team_user_id, self.subscription_type)
 
+
+    @staticmethod
+    @sync_to_async
+    def get_by_webhook_id(webhook_id: str):
+        return utils.get_or_none(UserSubscription, webhook_id=webhook_id)
 
     @staticmethod
     @sync_to_async
