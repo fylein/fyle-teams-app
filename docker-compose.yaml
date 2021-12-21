@@ -24,7 +24,7 @@ services:
       DB_PORT: 5432
     env_file: 
       - .env
-    entrypoint: bash run.sh
+    entrypoint: uvicorn fyle_teams_service.asgi:application --reload --host=0.0.0.0 --port=8000 --use-colors
     volumes:
       - .:/fyle-teams-app
     ports:
