@@ -1,3 +1,5 @@
+import enum
+
 from typing import Dict, Tuple
 
 from fyle.platform import Platform
@@ -8,6 +10,22 @@ from fyle_teams_app.libs import http, assertions, utils
 
 
 FYLE_TOKEN_URL = '{}/oauth/token'.format(settings.FYLE_ACCOUNTS_URL)
+
+class ReportState(enum.Enum):
+    DRAFT = 'DRAFT'
+    APPROVER_PENDING = 'APPROVER_PENDING'
+    PAYMENT_PROCESSING = 'PAYMENT_PROCESSING'
+    APPROVER_INQUIRY = 'APPROVER_INQUIRY'
+    APPROVED = 'APPROVED'
+    APPROVAL_DONE = 'APPROVAL_DONE'
+    APPROVAL_DISABLED = 'APPROVAL_DISABLED'
+    PAYMENT_PENDING = 'PAYMENT_PENDING'
+    PAID = 'PAID'
+
+
+class FyleResourceType(enum.Enum):
+    REPORT = 'REPORT'
+    EXPENSE = 'EXPENSE'
 
 
 async def get_fyle_sdk_connection(refresh_token: str) -> Platform:
@@ -87,8 +105,8 @@ async def get_fyle_profile(refresh_token: str) -> Dict:
 def get_fyle_resource_url(resource: Dict, resource_type: str) -> str:
 
     RESOURCE_URL_MAPPING = {
-        'REPORT': '{}/app/main/#/enterprise/reports'.format(settings.FYLE_APP_URL),
-        'EXPENSE': '{}/app/main/#/enterprise/view_expense'.format(settings.FYLE_APP_URL)
+        FyleResourceType.REPORT.value: '{}/app/main/#/enterprise/reports'.format(settings.FYLE_APP_URL),
+        FyleResourceType.EXPENSE.value: '{}/app/main/#/enterprise/view_expense'.format(settings.FYLE_APP_URL)
     }
 
     resource_base_url = RESOURCE_URL_MAPPING[resource_type]
@@ -129,12 +147,17 @@ def get_fyle_oauth_url(user_id: str, team_id: str) -> str:
 
 def can_approve_report(report: Dict, approver_user_id: str) -> Tuple[bool, str]:
 
-    report_approved_states = ['APPROVED', 'PAYMENT_PENDING', 'PAYMENT_PROCESSING', 'PAID']
+    report_approved_states = [
+        ReportState.APPROVED.value,
+        ReportState.PAYMENT_PENDING.value,
+        ReportState.PAYMENT_PROCESSING.value,
+        ReportState.PAID.value
+    ]
 
     report_message = None
     can_approve_report = True
 
-    if report['state'] == 'APPROVER_INQUIRY':
+    if report['state'] == ReportState.APPROVER_INQUIRY.value:
         can_approve_report = False
         report_message = 'This expense report has been sent back to the employee'
 
@@ -148,12 +171,12 @@ def can_approve_report(report: Dict, approver_user_id: str) -> Tuple[bool, str]:
 
             if approver['approver_user_id'] == approver_user_id:
 
-                if approver['state'] == 'APPROVAL_DONE':
+                if approver['state'] == ReportState.APPROVAL_DONE.value:
                     can_approve_report = False
                     report_message = 'Looks like you\'ve already approved this expense report 🙈'
                     break
 
-                if approver['state'] == 'APPROVAL_DISABLED':
+                if approver['state'] == ReportState.APPROVAL_DISABLED.value:
                     can_approve_report = False
                     report_message = 'Looks like you no longer have permission to approve this expense report 🙈'
                     break

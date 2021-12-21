@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from fyle_teams_app.models import User
 from fyle_teams_app.views.notifications.base import FyleNotificationView, NotificationType
 from fyle_teams_app.libs import team_utils
+from fyle_teams_app.libs.fyle_utils import ReportState
 from fyle_teams_app.ui.cards import notifications as notification_cards
 
 
@@ -23,7 +24,7 @@ class FyleApproverNotification(FyleNotificationView):
 
         report = webhook_data['data']
 
-        if report['state'] == 'APPROVER_PENDING':
+        if report['state'] == ReportState.APPROVER_PENDING.value:
 
             report_approval_card = notification_cards.get_report_approval_card(report)
 
