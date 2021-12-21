@@ -1,6 +1,7 @@
 from botbuilder.core import TurnContext, CardFactory
 from botbuilder.core.teams import TeamsInfo
 from botbuilder.schema import Activity
+from django.http.response import JsonResponse
 
 from fyle_teams_app.models import User
 from fyle_teams_app.libs import fyle_utils
@@ -40,3 +41,18 @@ class TeamAuthorisation:
                 attachments=[CardFactory.adaptive_card(pre_auth_card)]
             )
         )
+
+
+    @staticmethod
+    async def bot_uninstalled(turn_context: TurnContext):
+        turn_context_dict = turn_context.activity.as_dict()
+
+        user_id = turn_context_dict['from_property']['id']
+
+        # Check if user already exists
+        user = await User.get_by_id(user_id)
+
+        # Remove user
+        await User.remove_user(user)
+
+        return JsonResponse({})

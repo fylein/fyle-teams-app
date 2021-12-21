@@ -112,6 +112,54 @@ class UserSubscription(models.Model):
 
 
     @staticmethod
+    @sync_to_async
+    def get_user_subscriptions_by_user_id(user_id: str):
+        return UserSubscription.objects.filter(team_user_id=user_id)
+
+
+    @staticmethod
+    async def disable_notification_subscriptions(user) -> None:
+        access_token = await fyle_utils.get_fyle_access_token(user.fyle_refresh_token)
+        cluster_domain = await fyle_utils.get_cluster_domain(access_token)
+
+        SUBSCRIPTON_WEBHOOK_DETAILS_MAPPING = {
+            SubscriptionType.SPENDER.value: {
+                'role_required': 'FYLER',
+                'webhook_url': '{}/fyle/spender/notifications'.format(settings.TEAMS_SERVICE_BASE_URL)
+            },
+            SubscriptionType.APPROVER.value: {
+                'role_required': 'APPROVER',
+                'webhook_url': '{}/fyle/approver/notifications'.format(settings.TEAMS_SERVICE_BASE_URL)
+            }
+        }
+
+        user_id = user.team_user_id
+
+        user_subscriptions = await UserSubscription.get_user_subscriptions_by_user_id(user_id)
+
+        for user_subscription in user_subscriptions:
+            subscription_type = user_subscription.subscription_type
+            subscription_details = SUBSCRIPTON_WEBHOOK_DETAILS_MAPPING[subscription_type]
+
+            subscription_payload = {}
+            subscription_payload['data'] = {
+                'webhook_url': '{}/{}'.format(subscription_details['webhook_url'], user_subscription.webhook_id),
+                'is_enabled': False
+            }
+
+            # This will create async task an run in parallel and do another task
+            subscription = await asyncio.create_task(
+                UserSubscription.upsert_fyle_subscription(cluster_domain, access_token, subscription_payload, subscription_type)
+            )
+
+            if subscription.status != 200:
+                logger.error('Error while disabling %s subscription for user: %s ', subscription_type, user_id)
+                logger.error('%s Subscription error %s', subscription_type, subscription.content)
+                assertions.assert_good(False)
+
+
+
+    @staticmethod
     async def upsert_fyle_subscription(cluster_domain: str, access_token: str, subscription_payload: Dict, subscription_type: SubscriptionType) -> aiohttp.ClientResponse:
         FYLE_PLATFORM_URL = '{}/platform/v1'.format(cluster_domain)
 
