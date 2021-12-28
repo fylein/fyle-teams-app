@@ -36,8 +36,9 @@ class TeamAuthorisation:
         FYLE_OAUTH_URL = fyle_utils.get_fyle_oauth_url(user_id, team_id)
 
         short_fyle_oauth_url = shortner.tinyurl.short(FYLE_OAUTH_URL)
+        print('SHORT URL -> ', short_fyle_oauth_url)
 
-        FYLE_OAUTH_URL = team_utils.get_teams_stage_view_url(short_fyle_oauth_url, 'Link Fyle Account')
+        FYLE_OAUTH_URL = team_utils.get_teams_task_module_url(short_fyle_oauth_url, 'Link Fyle Account')
 
         pre_auth_card = authorisation_card.get_pre_auth_card(FYLE_OAUTH_URL)
 
