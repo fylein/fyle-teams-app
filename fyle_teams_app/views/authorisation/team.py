@@ -45,6 +45,7 @@ class TeamAuthorisation:
 
     @staticmethod
     async def bot_uninstalled(turn_context: TurnContext):
+
         turn_context_dict = turn_context.activity.as_dict()
 
         user_id = turn_context_dict['from_property']['id']

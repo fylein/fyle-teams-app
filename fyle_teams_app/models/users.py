@@ -47,7 +47,9 @@ class User(models.Model):
 
     @staticmethod
     async def remove_user(user):
-        await UserSubscription.disable_notification_subscriptions(user)
+        if user.fyle_user_id is not None:
+            await UserSubscription.disable_notification_subscriptions(user)
+            await UserSubscription.remove_user_subscriptions(user.team_user_id)
         await User.delete_user(user)
 
 

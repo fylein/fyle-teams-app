@@ -119,7 +119,7 @@ class UserSubscription(models.Model):
     @staticmethod
     @sync_to_async
     def get_user_subscriptions_by_user_id(user_id: str):
-        return UserSubscription.objects.filter(team_user_id=user_id)
+        return list(UserSubscription.objects.filter(team_user_id=user_id).values('subscription_type', 'webhook_id', 'fyle_subscription_id'))
 
 
     @staticmethod
@@ -129,11 +129,11 @@ class UserSubscription(models.Model):
 
         SUBSCRIPTON_WEBHOOK_DETAILS_MAPPING = {
             SubscriptionType.SPENDER.value: {
-                'role_required': 'FYLER',
+                'subscription_enum': SubscriptionType.SPENDER,
                 'webhook_url': '{}/fyle/spender/notifications'.format(settings.TEAMS_SERVICE_BASE_URL)
             },
             SubscriptionType.APPROVER.value: {
-                'role_required': 'APPROVER',
+                'subscription_enum': SubscriptionType.APPROVER,
                 'webhook_url': '{}/fyle/approver/notifications'.format(settings.TEAMS_SERVICE_BASE_URL)
             }
         }
@@ -143,18 +143,19 @@ class UserSubscription(models.Model):
         user_subscriptions = await UserSubscription.get_user_subscriptions_by_user_id(user_id)
 
         for user_subscription in user_subscriptions:
-            subscription_type = user_subscription.subscription_type
+            subscription_type = user_subscription['subscription_type']
             subscription_details = SUBSCRIPTON_WEBHOOK_DETAILS_MAPPING[subscription_type]
 
             subscription_payload = {}
             subscription_payload['data'] = {
-                'webhook_url': '{}/{}'.format(subscription_details['webhook_url'], user_subscription.webhook_id),
+                'id': user_subscription['fyle_subscription_id'],
+                'webhook_url': '{}/{}'.format(subscription_details['webhook_url'], user_subscription['webhook_id']),
                 'is_enabled': False
             }
 
             # This will create async task an run in parallel and do another task
             subscription = await asyncio.create_task(
-                UserSubscription.upsert_fyle_subscription(cluster_domain, access_token, subscription_payload, subscription_type)
+                UserSubscription.upsert_fyle_subscription(cluster_domain, access_token, subscription_payload, subscription_details['subscription_enum'])
             )
 
             if subscription.status != 200:
