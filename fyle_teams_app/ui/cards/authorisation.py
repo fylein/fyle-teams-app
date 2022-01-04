@@ -1,5 +1,9 @@
 from typing import Dict
 
+from fyle_teams_app.libs import fyle_utils
+
+FYLE_APP_DOMAIN = fyle_utils.get_fyle_app_domain()
+
 
 def get_pre_auth_card(fyle_oauth_url) -> Dict:
     pre_auth_card = {
@@ -28,7 +32,7 @@ def get_pre_auth_card(fyle_oauth_url) -> Dict:
         'actions': [
             {
                 'type': 'Action.OpenUrl',
-                'title': 'Link Your Fyle Account in fylehq.com',
+                'title': 'Link Your Fyle Account in {}'.format(FYLE_APP_DOMAIN),
                 'url': fyle_oauth_url,
                 'style': 'positive'
             }
@@ -376,7 +380,7 @@ def get_post_auth_card() -> Dict:
                                                         },
                                                         {
                                                             "type": "Action.OpenUrl",
-                                                            "title": "View in Fyle",
+                                                            "title": "View in {}".format(FYLE_APP_DOMAIN),
                                                             "url": "https://fylehq.com"
                                                         }
                                                     ]

@@ -1,15 +1,10 @@
-import pyshorteners
-
 from botbuilder.core import TurnContext, CardFactory
 from botbuilder.core.teams import TeamsInfo
 from botbuilder.schema import Activity
 
 from fyle_teams_app.models import User
-from fyle_teams_app.libs import fyle_utils, team_utils
+from fyle_teams_app.libs import fyle_utils
 from fyle_teams_app.ui.cards import authorisation as authorisation_card
-
-
-shortner = pyshorteners.Shortener()
 
 
 class TeamAuthorisation:
@@ -34,11 +29,6 @@ class TeamAuthorisation:
         user = await User.create_user(team_id, user_id, user_conversation_reference_dict)
 
         FYLE_OAUTH_URL = fyle_utils.get_fyle_oauth_url(user_id, team_id)
-
-        short_fyle_oauth_url = shortner.tinyurl.short(FYLE_OAUTH_URL)
-        print('SHORT URL -> ', short_fyle_oauth_url)
-
-        FYLE_OAUTH_URL = team_utils.get_teams_task_module_url(short_fyle_oauth_url, 'Link Fyle Account')
 
         pre_auth_card = authorisation_card.get_pre_auth_card(FYLE_OAUTH_URL)
 
