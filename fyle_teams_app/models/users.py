@@ -42,6 +42,19 @@ class User(models.Model):
 
     @staticmethod
     @sync_to_async
+    def delete_user(user):
+        user.delete()
+
+    @staticmethod
+    async def remove_user(user):
+        if user.fyle_user_id is not None:
+            await UserSubscription.disable_notification_subscriptions(user)
+            await UserSubscription.remove_user_subscriptions(user.team_user_id)
+        await User.delete_user(user)
+
+
+    @staticmethod
+    @sync_to_async
     def create_user(team_id: str, user_id: str, conversation_reference: Dict):
         return User.objects.create(
             team_id=team_id,
