@@ -7,6 +7,7 @@ from fyle_teams_app.models import User
 from fyle_teams_app.libs import fyle_utils
 from fyle_teams_app.ui.cards import authorisation as authorisation_card
 
+
 class TeamAuthorisation:
 
     @staticmethod

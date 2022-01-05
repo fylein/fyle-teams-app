@@ -8,10 +8,6 @@ from django.conf import settings
 from django.utils.decorators import classonlymethod
 
 from botbuilder.schema import Activity
-from botbuilder.core import (
-    BotFrameworkAdapterSettings,
-    BotFrameworkAdapter,
-)
 
 from fyle_teams_app.bot import FyleBot
 from fyle_teams_app.libs import logger
@@ -20,11 +16,8 @@ from fyle_teams_app.libs import logger
 logger = logger.get_logger(__name__)
 
 
-SETTINGS = BotFrameworkAdapterSettings(app_id=settings.TEAMS_APP_ID, app_password=settings.TEAMS_APP_PASSWORD)
-ADAPTER = BotFrameworkAdapter(SETTINGS)
-
-
-ADAPTER.on_turn_error = FyleBot.on_error
+TEAMS_BOT_ADAPTER = settings.TEAMS_BOT_ADAPTER
+TEAMS_BOT_ADAPTER.on_turn_error = FyleBot.on_error
 
 
 class TeamsView(View):
@@ -50,7 +43,7 @@ class TeamsView(View):
         )
 
         try:
-            response = await ADAPTER.process_activity(activity, auth_header, FyleBot().on_turn)
+            response = await TEAMS_BOT_ADAPTER.process_activity(activity, auth_header, FyleBot().on_turn)
 
             if response:
                 return JsonResponse(response.body, status=response.status)

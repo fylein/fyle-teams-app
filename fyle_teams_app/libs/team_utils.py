@@ -1,9 +1,11 @@
 from typing import List
+
 from botbuilder.schema import ConversationReference, Attachment, Activity
 
 from django.conf import settings
 
-from fyle_teams_app.server import ADAPTER
+
+TEAMS_BOT_ADAPTER = settings.TEAMS_BOT_ADAPTER
 
 
 async def send_message_to_user(conversation_reference: ConversationReference, message: str = None, attachments: List[Attachment] = None):
@@ -18,10 +20,10 @@ async def send_message_to_user(conversation_reference: ConversationReference, me
             attachments=attachments
         )
 
-    return await ADAPTER.continue_conversation(
+    return await TEAMS_BOT_ADAPTER.continue_conversation(
         conversation_reference,
         lambda turn_context: turn_context.send_activity(
             activity
         ),
-        settings.TEAMS_APP_ID
+        settings.TEAMS_BOT_ID
     )
