@@ -14,6 +14,9 @@ import sys
 
 from pathlib import Path
 
+from botbuilder.core import BotFrameworkAdapterSettings, BotFrameworkAdapter
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -203,5 +206,9 @@ FYLE_BRANCHIO_BASE_URI = os.environ['FYLE_BRANCHIO_BASE_URI']
 
 # Teams Settings
 TEAMS_APP_ID = os.environ['TEAMS_APP_ID']
-TEAMS_APP_PASSWORD = os.environ['TEAMS_APP_PASSWORD']
+TEAMS_BOT_ID = os.environ['TEAMS_BOT_ID']
+TEAMS_BOT_PASSWORD = os.environ['TEAMS_BOT_PASSWORD']
 TEAMS_SERVICE_BASE_URL = os.environ['TEAMS_SERVICE_BASE_URL']
+
+TEAMS_BOT_SETTINGS = BotFrameworkAdapterSettings(app_id=TEAMS_BOT_ID, app_password=TEAMS_BOT_PASSWORD)
+TEAMS_BOT_ADAPTER = BotFrameworkAdapter(TEAMS_BOT_SETTINGS)
