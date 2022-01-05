@@ -4,6 +4,9 @@ from fyle_teams_app.libs import utils, fyle_utils
 from fyle_teams_app.libs.fyle_utils import ReportState, FyleResourceType
 
 
+FYLE_APP_DOMAIN = fyle_utils.get_fyle_app_domain()
+
+
 expenses = [
     {
         'amount': '123.45',
@@ -290,7 +293,7 @@ def get_report_approval_card(report: Dict, message: str = None, can_approve_repo
                         'actions': [
                             {
                                 'type': 'Action.OpenUrl',
-                                'title': 'View in Fyle',
+                                'title': 'View Report in {}'.format(FYLE_APP_DOMAIN),
                                 'url': '{}'.format(fyle_utils.get_fyle_resource_url(report, FyleResourceType.REPORT.value))
                             }
                         ]
@@ -391,7 +394,7 @@ def get_report_details_card(report: Dict, headline_text: str) -> Dict:
                         'actions': [
                             {
                                 'type': 'Action.OpenUrl',
-                                'title': 'View in Fyle',
+                                'title': 'View Report in {}'.format(FYLE_APP_DOMAIN),
                                 'url': '{}'.format(fyle_utils.get_fyle_resource_url(report, FyleResourceType.REPORT.value))
                             }
                         ]
@@ -495,7 +498,7 @@ def get_expense_details_card(expense: Dict, headline_text: str) -> Dict:
                         'actions': [
                             {
                                 'type': 'Action.OpenUrl',
-                                'title': 'View in Fyle',
+                                'title': 'View Expense in {}'.format(FYLE_APP_DOMAIN),
                                 'url': '{}'.format(fyle_utils.get_fyle_resource_url(expense, FyleResourceType.EXPENSE.value))
                             }
                         ]

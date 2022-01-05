@@ -182,3 +182,10 @@ def can_approve_report(report: Dict, approver_user_id: str) -> Tuple[bool, str]:
                     break
 
     return can_approve_report, report_message
+
+
+def get_fyle_app_domain():
+    fyle_app_url = settings.FYLE_APP_URL
+    hostname = fyle_app_url.split('//')[1]
+    domain = '.'.join(hostname.split('.')[1:])
+    return domain

@@ -88,6 +88,6 @@ class FyleAuthorisation(View):
                         attachments=[CardFactory.adaptive_card(post_auth_card)]
                     )
 
-        redirect_url = 'https://teams.microsoft.com/l/chat/0/0?users=28:{}'.format(settings.TEAMS_APP_ID)
+        redirect_url = 'https://teams.microsoft.com/l/chat/0/0?users=28:{}'.format(settings.TEAMS_BOT_ID)
 
         return HttpResponseRedirect(redirect_url)

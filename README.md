@@ -28,7 +28,8 @@ TODO
     FYLE_ACCOUNTS_URL=fakefyleaccounturl
     FYLE_BRANCHIO_BASE_URI=fakefylebranchiobaseuri
     TEAMS_APP_ID=faketeamsappid
-    TEAMS_APP_PASSWORD=faketeamsapppassowrd
+    TEAMS_BOT_ID=faketeamsbotid
+    TEAMS_BOT_PASSWORD=faketeamsapppassowrd
     TEAMS_SERVICE_BASE_URL=aketeamsservicebaseurl
     FYLE_TEAMS_APP_SEGMENT_KEY=fakesegmentkey
     ALLOWED_HOSTS=fakeallowedhosts
