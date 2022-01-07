@@ -82,6 +82,17 @@ class FyleNotificationView(View):
 
 
     @staticmethod
+    def get_event_data(user: User) -> Dict:
+        event_data = {
+            'asset': 'TEAMS_APP',
+            'team_user_id': user.team_user_id,
+            'fyle_user_id': user.fyle_user_id,
+            'email': user.email
+        }
+        return event_data
+
+
+    @staticmethod
     def get_report_tracking_data(user: User, report: Dict) -> Dict:
         event_data = FyleNotificationView.get_event_data(user)
 
