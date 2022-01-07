@@ -12,6 +12,8 @@ from django.utils.decorators import classonlymethod
 
 from fyle_teams_app.models import User, UserSubscription
 from fyle_teams_app.libs import assertions, logger
+from fyle_teams_app.libs.fyle_utils import FyleResourceType
+from fyle_teams_app.libs.tracking import Tracking
 
 
 logger = logger.get_logger(__name__)
@@ -77,3 +79,36 @@ class FyleNotificationView(View):
             return await notification_handler(webhook_data, user, user_conversation_reference)
 
         return JsonResponse({}, status=200)
+
+
+    @staticmethod
+    def get_report_tracking_data(user: User, report: Dict) -> Dict:
+        event_data = FyleNotificationView.get_event_data(user)
+
+        event_data['report_id'] = report['id']
+        event_data['org_id'] = report['org_id']
+
+        return event_data
+
+
+    @staticmethod
+    def get_expense_tracking_data(user: User, expense: Dict) -> Dict:
+        event_data = FyleNotificationView.get_event_data(user)
+
+        event_data['expense_id'] = expense['id']
+        event_data['org_id'] = expense['org_id']
+
+        return event_data
+
+
+    @staticmethod
+    def track_notification(event_name: str, user: User, resource_type: str, resource: Dict) -> None:
+
+        if resource_type == FyleResourceType.REPORT:
+            event_data = FyleNotificationView.get_report_tracking_data(user, resource)
+        elif resource_type == FyleResourceType.EXPENSE:
+            event_data = FyleNotificationView.get_expense_tracking_data(user, resource)
+
+        tracking = Tracking(user.email)
+
+        tracking.track_event(user.email, event_name, event_data)
