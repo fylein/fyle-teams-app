@@ -8,6 +8,7 @@ from django.http import JsonResponse
 from fyle_teams_app.models import User
 from fyle_teams_app.views.notifications.base import FyleNotificationView, NotificationType
 from fyle_teams_app.libs import team_utils
+from fyle_teams_app.libs.fyle_utils import FyleResourceType
 from fyle_teams_app.ui.cards import notifications as notification_cards
 
 
@@ -35,6 +36,8 @@ class FyleFylerNotification(FyleNotificationView):
             attachments=[CardFactory.adaptive_card(report_approved_card)]
         )
 
+        self.track_notification('Report Partially Approved Notification Received', user, FyleResourceType.REPORT, report)
+
         return JsonResponse({}, status=200)
 
 
@@ -48,6 +51,8 @@ class FyleFylerNotification(FyleNotificationView):
             conversation_reference=user_conversation_reference,
             attachments=[CardFactory.adaptive_card(report_payment_processing_card)]
         )
+
+        self.track_notification('Report Payment Processing Notification Received', user, FyleResourceType.REPORT, report)
 
         return JsonResponse({}, status=200)
 
@@ -64,6 +69,8 @@ class FyleFylerNotification(FyleNotificationView):
             conversation_reference=user_conversation_reference,
             attachments=[CardFactory.adaptive_card(report_sendback_card)]
         )
+
+        self.track_notification('Report Approver Sendback Notification Received', user, FyleResourceType.REPORT, report)
 
         return JsonResponse({}, status=200)
 
@@ -84,6 +91,8 @@ class FyleFylerNotification(FyleNotificationView):
                 attachments=[CardFactory.adaptive_card(report_commented_card)]
             )
 
+            self.track_notification('Report Commented Notification Received', user, FyleResourceType.REPORT, report)
+
         return JsonResponse({}, status=200)
 
 
@@ -103,6 +112,8 @@ class FyleFylerNotification(FyleNotificationView):
                 attachments=[CardFactory.adaptive_card(expense_commented_card)]
             )
 
+            self.track_notification('Expense Commented Notification Received', user, FyleResourceType.EXPENSE, expense)
+
         return JsonResponse({}, status=200)
 
 
@@ -116,5 +127,7 @@ class FyleFylerNotification(FyleNotificationView):
             conversation_reference=user_conversation_reference,
             attachments=[CardFactory.adaptive_card(report_paid_card)]
         )
+
+        self.track_notification('Report Paid Notification Received', user, FyleResourceType.REPORT, report)
 
         return JsonResponse({}, status=200)

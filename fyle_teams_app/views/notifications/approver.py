@@ -8,7 +8,7 @@ from django.http import JsonResponse
 from fyle_teams_app.models import User
 from fyle_teams_app.views.notifications.base import FyleNotificationView, NotificationType
 from fyle_teams_app.libs import team_utils
-from fyle_teams_app.libs.fyle_utils import ReportState
+from fyle_teams_app.libs.fyle_utils import ReportState, FyleResourceType
 from fyle_teams_app.ui.cards import notifications as notification_cards
 
 
@@ -32,5 +32,7 @@ class FyleApproverNotification(FyleNotificationView):
                 conversation_reference=user_conversation_reference,
                 attachments=[CardFactory.adaptive_card(report_approval_card)]
             )
+
+            self.track_notification('Report Approval Notification Received', user, FyleResourceType.REPORT, report)
 
         return JsonResponse({}, status=200)
