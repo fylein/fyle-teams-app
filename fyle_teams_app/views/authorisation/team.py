@@ -35,7 +35,7 @@ class TeamAuthorisation:
 
         user_details = await TeamsInfo.get_member(turn_context, user_id)
 
-        User.track_bot_installed(user_details)
+        User.track_bot_installation_status(user_details, 'Teams Bot Installed')
 
         return await turn_context.send_activity(
             Activity(
@@ -56,5 +56,9 @@ class TeamAuthorisation:
 
         # Remove user
         await User.remove_user(user)
+
+        user_details = await TeamsInfo.get_member(turn_context, user_id)
+
+        User.track_bot_installation_status(user_details, 'Teams Bot Uninstalled')
 
         return JsonResponse({})

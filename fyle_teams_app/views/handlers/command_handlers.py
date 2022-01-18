@@ -50,11 +50,21 @@ class CommandHandler:
 
         user = await User.get_by_id(user_id)
 
-        if user.fyle_user_id is None:
+        fyle_user_id = user.fyle_user_id
+
+        if fyle_user_id is None:
 
             message = 'You have not linked your Fyle account 🤕 '
 
         else:
+
+            user_details_to_track = {
+                'user_id': user_id,
+                'team_id': team_id,
+                'fyle_user_id': fyle_user_id,
+                'email': user.email
+            }
+
             processing_message = 'Hey we are unlinking your Fyle account with Microsft Teams, we will send a message once it is done'
 
             await turn_context.send_activity(processing_message)
@@ -68,6 +78,8 @@ class CommandHandler:
             message = 'You have successfully unlinked your Fyle account  🎊'
 
         await turn_context.send_activity(message)
+
+        User.track_fyle_account_unlinked(user_details_to_track)
 
         return JsonResponse({})
 

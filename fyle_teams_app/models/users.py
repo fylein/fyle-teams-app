@@ -128,9 +128,18 @@ class User(models.Model):
 
         tracking.track_event(user.email, 'Fyle Account Linked To Teams', event_data)
 
+    @staticmethod
+    def track_fyle_account_unlinked(event_data) -> None:
+
+        email = event_data['email']
+
+        tracking = Tracking(email)
+
+        tracking.track_event(email, 'Fyle Account Unlinked From Teams', event_data)
+
 
     @staticmethod
-    def track_bot_installed(user_details: TeamsChannelAccount):
+    def track_bot_installation_status(user_details: TeamsChannelAccount, event_name: str):
         event_data = {
             'user_id': user_details.id,
             'team_id': user_details.tenant_id,
@@ -140,4 +149,4 @@ class User(models.Model):
 
         tracking = Tracking(user_details.email)
 
-        tracking.track_event(user_details.email, 'Teams Bot Installed', event_data)
+        tracking.track_event(user_details.email, event_name, event_data)
