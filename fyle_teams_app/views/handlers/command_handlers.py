@@ -73,25 +73,18 @@ class CommandHandler:
 
 
     async def handle_link_fyle_account(self, turn_context: TurnContext, user_id: str, team_id: str) -> JsonResponse:
-
         user = await User.get_by_id(user_id)
 
         if user.fyle_user_id is not None:
-
             message = 'You have already linked your Fyle account 🎊'
-
         else:
-
             FYLE_OAUTH_URL = fyle_utils.get_fyle_oauth_url(user_id, team_id)
-
             pre_auth_card = authorisation_card.get_pre_auth_card(FYLE_OAUTH_URL)
 
             message = Activity(
                 attachments=[CardFactory.adaptive_card(pre_auth_card)]
             )
-
         await turn_context.send_activity(
             message
         )
-
         return JsonResponse({})
