@@ -10,6 +10,8 @@ from django.http.response import JsonResponse
 from fyle_teams_app.models import User
 from fyle_teams_app.libs import logger, fyle_utils, assertions
 from fyle_teams_app.ui.cards import notifications as notification_cards
+from fyle_teams_app.libs.tracking import Tracking
+
 
 
 logger = logger.get_logger(__name__)
@@ -71,6 +73,10 @@ class ActionHandler:
                     report = platform.v1beta.approver.reports.approve(report_id)
                     report = report['data']
                     report_message = '**Expense Report Approved** 🚀 '
+
+                    # Track report approved
+                    self.track_report_approved(user, report)
+
                 except platform_exceptions.PlatformError as e:
                     logger.error('Error while processing report approve -> %s', e)
 
@@ -87,3 +93,18 @@ class ActionHandler:
             update_activity.id = turn_context.activity.reply_to_id
 
         return await turn_context.update_activity(update_activity)
+
+
+    def track_report_approved(self, user: User, report: Dict):
+        event_data = {
+            'team_user_id': user.team_user_id,
+            'fyle_user_id': user.fyle_user_id,
+            'email': user.email,
+            'team_id': user.team_id,
+            'report_id': report['id'],
+            'org_id': report['org_id']
+        }
+
+        tracking = Tracking(user.email)
+
+        tracking.track_event(user.email, 'Report Approved From Teams', event_data)
