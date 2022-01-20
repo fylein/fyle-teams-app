@@ -121,5 +121,4 @@ class FyleNotificationView(View):
             event_data = FyleNotificationView.get_expense_tracking_data(user, resource)
 
         tracking = Tracking(user.email)
-
         tracking.track_event(user.email, event_name, event_data)

@@ -13,7 +13,6 @@ from fyle_teams_app.ui.cards import notifications as notification_cards
 from fyle_teams_app.libs.tracking import Tracking
 
 
-
 logger = logger.get_logger(__name__)
 
 
@@ -74,7 +73,6 @@ class ActionHandler:
                     report = report['data']
                     report_message = '**Expense Report Approved** 🚀 '
 
-                    # Track report approved
                     self.track_report_approved(user, report)
 
                 except platform_exceptions.PlatformError as e:
