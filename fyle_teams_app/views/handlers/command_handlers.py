@@ -37,7 +37,6 @@ class CommandHandler:
         turn_context_dict = turn_context.activity.as_dict()
 
         user_id = turn_context_dict['from_property']['id']
-
         team_id = turn_context_dict['channel_data']['tenant']['id']
 
         if command_handler is not None:
@@ -53,11 +52,8 @@ class CommandHandler:
         fyle_user_id = user.fyle_user_id
 
         if fyle_user_id is None:
-
             message = 'You have not linked your Fyle account 🤕 '
-
         else:
-
             user_details_to_track = {
                 'user_id': user_id,
                 'team_id': team_id,
@@ -70,9 +66,7 @@ class CommandHandler:
             await turn_context.send_activity(processing_message)
 
             await UserSubscription.disable_notification_subscriptions(user)
-
             await UserSubscription.remove_user_subscriptions(user_id)
-
             await User.clear_user_details(user_id)
 
             message = 'You have successfully unlinked your Fyle account  🎊'
