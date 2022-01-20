@@ -61,7 +61,7 @@ class CommandHandler:
                 'email': user.email
             }
 
-            processing_message = 'Hey we are unlinking your Fyle account with Microsft Teams, we will send a message once it is done'
+            processing_message = 'We are unlinking your Fyle account with Microsft Teams, we will send a message once it is done'
 
             await turn_context.send_activity(processing_message)
 

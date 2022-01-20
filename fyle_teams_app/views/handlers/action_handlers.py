@@ -106,5 +106,4 @@ class ActionHandler:
         }
 
         tracking = Tracking(user.email)
-
         tracking.track_event(user.email, 'Report Approved From Teams', event_data)

@@ -130,11 +130,8 @@ class User(models.Model):
 
     @staticmethod
     def track_fyle_account_unlinked(event_data) -> None:
-
         email = event_data['email']
-
         tracking = Tracking(email)
-
         tracking.track_event(email, 'Fyle Account Unlinked From Teams', event_data)
 
 
@@ -148,5 +145,4 @@ class User(models.Model):
         }
 
         tracking = Tracking(user_details.email)
-
         tracking.track_event(user_details.email, event_name, event_data)
