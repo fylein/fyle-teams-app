@@ -36,124 +36,124 @@ expenses = [
 
 
 def get_report_approval_card(report: Dict, message: str = None, can_approve_report: bool = True) -> Dict:
-    view_report_expenses_view = [
-        {
-            'type': 'TextBlock',
-            'text': '**View Report Expenses**',
-            'wrap': True
-        },
-        {
-            'type': 'ColumnSet',
-            'id': 'expense_details_heading',
-            'isVisible': False,
-            'columns': [
-                {
-                    'type': 'Column',
-                    'width': 'stretch',
-                    'items': [
-                        {
-                            'type': 'TextBlock',
-                            'text': '**Date of Spend**',
-                            'wrap': True
-                        }
-                    ]
-                },
-                {
-                    'type': 'Column',
-                    'width': 'stretch',
-                    'items': [
-                        {
-                            'type': 'TextBlock',
-                            'text': '**Category**',
-                            'wrap': True
-                        }
-                    ]
-                },
-                {
-                    'type': 'Column',
-                    'width': 'stretch',
-                    'items': [
-                        {
-                            'type': 'TextBlock',
-                            'text': '**Merchant**',
-                            'wrap': True
-                        }
-                    ]
-                },
-                {
-                    'type': 'Column',
-                    'width': 'stretch',
-                    'items': [
-                        {
-                            'type': 'TextBlock',
-                            'text': '**Amount**',
-                            'wrap': True
-                        }
-                    ]
-                },
-            ]
-        }
-    ]
-    view_report_expenses_target_elements = [
-        'expense_details_heading',
-        'chevronUp',
-        'chevronDown'
-    ]
+    # view_report_expenses_view = [
+    #     {
+    #         'type': 'TextBlock',
+    #         'text': '**View Report Expenses**',
+    #         'wrap': True
+    #     },
+    #     {
+    #         'type': 'ColumnSet',
+    #         'id': 'expense_details_heading',
+    #         'isVisible': False,
+    #         'columns': [
+    #             {
+    #                 'type': 'Column',
+    #                 'width': 'stretch',
+    #                 'items': [
+    #                     {
+    #                         'type': 'TextBlock',
+    #                         'text': '**Date of Spend**',
+    #                         'wrap': True
+    #                     }
+    #                 ]
+    #             },
+    #             {
+    #                 'type': 'Column',
+    #                 'width': 'stretch',
+    #                 'items': [
+    #                     {
+    #                         'type': 'TextBlock',
+    #                         'text': '**Category**',
+    #                         'wrap': True
+    #                     }
+    #                 ]
+    #             },
+    #             {
+    #                 'type': 'Column',
+    #                 'width': 'stretch',
+    #                 'items': [
+    #                     {
+    #                         'type': 'TextBlock',
+    #                         'text': '**Merchant**',
+    #                         'wrap': True
+    #                     }
+    #                 ]
+    #             },
+    #             {
+    #                 'type': 'Column',
+    #                 'width': 'stretch',
+    #                 'items': [
+    #                     {
+    #                         'type': 'TextBlock',
+    #                         'text': '**Amount**',
+    #                         'wrap': True
+    #                     }
+    #                 ]
+    #             },
+    #         ]
+    #     }
+    # ]
+    # view_report_expenses_target_elements = [
+    #     'expense_details_heading',
+    #     'chevronUp',
+    #     'chevronDown'
+    # ]
 
-    for expense in expenses:
-        view_report_expenses_target_elements.append(expense['id'])
-        expense_view = {
-            'type': 'ColumnSet',
-            'id': '{}'.format(expense['id']),
-            'isVisible': False,
-            'columns': [
-                {
-                    'type': 'Column',
-                    'width': 'stretch',
-                    'items': [
-                        {
-                            'type': 'TextBlock',
-                            'text': '{}'.format(utils.get_formatted_datetime(expense['spent_at'], '%B %d, %Y')),
-                            'wrap': True
-                        }
-                    ]
-                },
-                {
-                    'type': 'Column',
-                    'width': 'stretch',
-                    'items': [
-                        {
-                            'type': 'TextBlock',
-                            'text': '{}'.format(expense['category']['name']),
-                            'wrap': True
-                        }
-                    ]
-                },
-                {
-                    'type': 'Column',
-                    'width': 'stretch',
-                    'items': [
-                        {
-                            'type': 'TextBlock',
-                            'text': '{}'.format(expense['merchant']),
-                            'wrap': True
-                        }
-                    ]
-                },
-                {
-                    'type': 'Column',
-                    'width': 'stretch',
-                    'items': [
-                        {
-                            'type': 'TextBlock',
-                            'text': '{} {}'.format(expense['currency'], expense['amount']),
-                            'wrap': True
-                        }
-                    ]
-                }
-            ]
-        }
-        view_report_expenses_view.append(expense_view)
+    # for expense in expenses:
+    #     view_report_expenses_target_elements.append(expense['id'])
+    #     expense_view = {
+    #         'type': 'ColumnSet',
+    #         'id': '{}'.format(expense['id']),
+    #         'isVisible': False,
+    #         'columns': [
+    #             {
+    #                 'type': 'Column',
+    #                 'width': 'stretch',
+    #                 'items': [
+    #                     {
+    #                         'type': 'TextBlock',
+    #                         'text': '{}'.format(utils.get_formatted_datetime(expense['spent_at'], '%B %d, %Y')),
+    #                         'wrap': True
+    #                     }
+    #                 ]
+    #             },
+    #             {
+    #                 'type': 'Column',
+    #                 'width': 'stretch',
+    #                 'items': [
+    #                     {
+    #                         'type': 'TextBlock',
+    #                         'text': '{}'.format(expense['category']['name']),
+    #                         'wrap': True
+    #                     }
+    #                 ]
+    #             },
+    #             {
+    #                 'type': 'Column',
+    #                 'width': 'stretch',
+    #                 'items': [
+    #                     {
+    #                         'type': 'TextBlock',
+    #                         'text': '{}'.format(expense['merchant']),
+    #                         'wrap': True
+    #                     }
+    #                 ]
+    #             },
+    #             {
+    #                 'type': 'Column',
+    #                 'width': 'stretch',
+    #                 'items': [
+    #                     {
+    #                         'type': 'TextBlock',
+    #                         'text': '{} {}'.format(expense['currency'], expense['amount']),
+    #                         'wrap': True
+    #                     }
+    #                 ]
+    #             }
+    #         ]
+    #     }
+    #     view_report_expenses_view.append(expense_view)
 
     report_approval_card = {
         'type': 'AdaptiveCard',
@@ -237,54 +237,54 @@ def get_report_approval_card(report: Dict, message: str = None, can_approve_repo
                     }
                 ]
             },
-            {
-                'type': 'Container',
-                'spacing': 'Large',
-                'style': 'emphasis',
-                'items': [
-                    {
-                        'type': 'Container',
-                        'items': [
-                            {
-                                'type': 'ColumnSet',
-                                'columns': [
-                                    {
-                                        'type': 'Column',
-                                        'width': 'stretch',
-                                        'items': view_report_expenses_view
-                                    },
-                                    {
-                                        'type': 'Column',
-                                        'spacing': 'Small',
-                                        'selectAction': {
-                                            'type': 'Action.ToggleVisibility',
-                                            'targetElements': view_report_expenses_target_elements
-                                        },
-                                        'verticalContentAlignment': 'Center',
-                                        'items': [
-                                            {
-                                                'type': 'Image',
-                                                'id': 'chevronDown',
-                                                'url': 'https://adaptivecards.io/content/down.png',
-                                                'width': '20px',
-                                            },
-                                            {
-                                                'type': 'Image',
-                                                'id': 'chevronUp',
-                                                'url': 'https://adaptivecards.io/content/up.png',
-                                                'width': '20px',
-                                                'isVisible': False
-                                            }
-                                        ],
-                                        'width': 'auto'
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ],
-                'bleed': True
-            },
+            # {
+            #     'type': 'Container',
+            #     'spacing': 'Large',
+            #     'style': 'emphasis',
+            #     'items': [
+            #         {
+            #             'type': 'Container',
+            #             'items': [
+            #                 {
+            #                     'type': 'ColumnSet',
+            #                     'columns': [
+            #                         {
+            #                             'type': 'Column',
+            #                             'width': 'stretch',
+            #                             'items': view_report_expenses_view
+            #                         },
+            #                         {
+            #                             'type': 'Column',
+            #                             'spacing': 'Small',
+            #                             'selectAction': {
+            #                                 'type': 'Action.ToggleVisibility',
+            #                                 'targetElements': view_report_expenses_target_elements
+            #                             },
+            #                             'verticalContentAlignment': 'Center',
+            #                             'items': [
+            #                                 {
+            #                                     'type': 'Image',
+            #                                     'id': 'chevronDown',
+            #                                     'url': 'https://adaptivecards.io/content/down.png',
+            #                                     'width': '20px',
+            #                                 },
+            #                                 {
+            #                                     'type': 'Image',
+            #                                     'id': 'chevronUp',
+            #                                     'url': 'https://adaptivecards.io/content/up.png',
+            #                                     'width': '20px',
+            #                                     'isVisible': False
+            #                                 }
+            #                             ],
+            #                             'width': 'auto'
+            #                         }
+            #                     ]
+            #                 }
+            #             ]
+            #         }
+            #     ],
+            #     'bleed': True
+            # },
             {
                 'type': 'Container',
                 'items': [
