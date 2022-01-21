@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from fyle_teams_app.server import TeamsView
+from fyle_teams_app.server import TeamsView, KubernetesView
 from fyle_teams_app.views.authorisation.fyle import FyleAuthorisation
 from fyle_teams_app.views.notifications.approver import FyleApproverNotification
 from fyle_teams_app.views.notifications.fyler import FyleFylerNotification
@@ -24,7 +24,9 @@ from fyle_teams_app.views.notifications.fyler import FyleFylerNotification
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    # Teams url
+    path('ready', KubernetesView.as_view()),
+
+    # Teams urls
     path('teams/events', TeamsView.as_view()),
 
     # Fyle urls

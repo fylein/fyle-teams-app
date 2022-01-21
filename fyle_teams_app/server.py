@@ -55,3 +55,9 @@ class TeamsView(View):
             raise exception
 
         return JsonResponse({}, status=400)
+
+
+class KubernetesView(View):
+
+    def get(self, request: HttpRequest) -> HttpResponse:
+        return JsonResponse({'message': 'teams service is ready'}, status=200)
