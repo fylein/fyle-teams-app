@@ -265,7 +265,7 @@ def get_post_auth_card() -> Dict:
                                                                                     "items": [
                                                                                         {
                                                                                             "type": "TextBlock",
-                                                                                            "text": "[E/2021/11/T/14](https://fylehq.com)",
+                                                                                            "text": "[E/2021/11/T/14]",
                                                                                             "wrap": True
                                                                                         }
                                                                                     ]
@@ -316,7 +316,7 @@ def get_post_auth_card() -> Dict:
                                                                                     "items": [
                                                                                         {
                                                                                             "type": "TextBlock",
-                                                                                            "text": "[E/2021/11/T/14](https://fylehq.com)",
+                                                                                            "text": "[E/2021/11/T/14]",
                                                                                             "wrap": True
                                                                                         }
                                                                                     ]
