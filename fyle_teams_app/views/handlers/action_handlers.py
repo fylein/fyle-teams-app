@@ -22,8 +22,7 @@ class ActionHandler:
 
     def initialize_action_handlers(self):
         self.action_handlers = {
-            'approve_report': self.handle_approve_report,
-            'mock_report_approve': self.handle_mock_report_approve
+            'approve_report': self.handle_approve_report
         }
 
 
@@ -42,10 +41,6 @@ class ActionHandler:
         else:
             return await action_handler(turn_context, action_details)
 
-        return JsonResponse({})
-
-
-    async def handle_mock_report_approve(self, turn_context: TurnContext, action_details: Dict):
         return JsonResponse({})
 
 
