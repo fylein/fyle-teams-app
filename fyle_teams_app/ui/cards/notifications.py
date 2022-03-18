@@ -7,34 +7,6 @@ from fyle_teams_app.libs.fyle_utils import ReportState, FyleResourceType
 FYLE_APP_DOMAIN = fyle_utils.get_fyle_app_domain()
 
 
-expenses = [
-    {
-        'amount': '123.45',
-        'currency': 'INR',
-        'seq_num': 'E/2021/11/T/15',
-        'id': 'tx4whV8C1GGo',
-        'org_id': 'abcd234',
-        'spent_at': '2020-06-01T13:14:54.804+00:00',
-        'category': {
-            'name': 'Internet'
-        },
-        'merchant': 'Jio'
-    },
-    {
-        'amount': '32.12',
-        'currency': 'INR',
-        'seq_num': 'E/2021/11/T/15',
-        'id': 'tx4whV8C1GG1',
-        'org_id': 'abcd234',
-        'spent_at': '2020-06-01T13:14:54.804+00:00',
-        'category': {
-            'name': 'Taxi'
-        },
-        'merchant': 'Uber'
-    }
-]
-
-
 def get_report_approval_card(report: Dict, message: str = None, can_approve_report: bool = True) -> Dict:
     # view_report_expenses_view = [
     #     {
@@ -210,7 +182,7 @@ def get_report_approval_card(report: Dict, message: str = None, can_approve_repo
                         'spacing': 'Small',
                         'size': 'Small',
                         'weight': 'Bolder',
-                        'text': '[[{}]]({})'.format(report['seq_num'], fyle_utils.get_fyle_resource_url(report, FyleResourceType.REPORT.value)),
+                        'text': '[{}]'.format(report['seq_num']),
                         'wrap': True
                     },
                     {
@@ -610,9 +582,8 @@ def get_report_approval_state_section(report: Dict) -> Dict:
 
 def get_report_approved_card(report: Dict) -> Dict:
 
-    headline_text = '✅   Your expense report [[{}]]({}) has been approved'.format(
-        report['seq_num'],
-        fyle_utils.get_fyle_resource_url(report, FyleResourceType.REPORT.value)
+    headline_text = '✅   Your expense report [{}] has been approved'.format(
+        report['seq_num']
     )
     report_approved_card = get_report_details_card(report, headline_text)
     report_approval_state_section = get_report_approval_state_section(report)
@@ -624,9 +595,8 @@ def get_report_approved_card(report: Dict) -> Dict:
 
 def get_report_payment_processing_card(report: Dict) -> Dict:
 
-    headline_text = '💰  Payment is being processed for your expense report [[{}]]({})'.format(
-        report['seq_num'],
-        fyle_utils.get_fyle_resource_url(report, FyleResourceType.REPORT.value)
+    headline_text = '💰  Payment is being processed for your expense report [{}]'.format(
+        report['seq_num']
     )
     report_payment_processing_card = get_report_details_card(report, headline_text)
 
@@ -635,9 +605,8 @@ def get_report_payment_processing_card(report: Dict) -> Dict:
 
 def get_report_paid_card(report: Dict) -> Dict:
 
-    headline_text = '💵  Reimbursement for your expense report [[{}]]({}) is here!'.format(
-        report['seq_num'],
-        fyle_utils.get_fyle_resource_url(report, FyleResourceType.REPORT.value)
+    headline_text = '💵  Reimbursement for your expense report [{}] is here!'.format(
+        report['seq_num']
     )
     report_paid_card = get_report_details_card(report, headline_text)
 
@@ -646,11 +615,10 @@ def get_report_paid_card(report: Dict) -> Dict:
 
 def get_report_send_back_card(report: Dict, report_sendback_reason: str) -> Dict:
 
-    headline_text = '🚫     {} ({}) sent back your expense report [[{}]]({})'.format(
+    headline_text = '🚫     {} ({}) sent back your expense report [{}]'.format(
         report['updated_by_user']['full_name'],
         report['updated_by_user']['email'],
-        report['seq_num'],
-        fyle_utils.get_fyle_resource_url(report, FyleResourceType.REPORT.value)
+        report['seq_num']
     )
     report_send_back_card = get_report_details_card(report, headline_text)
 
@@ -681,11 +649,10 @@ def get_report_send_back_card(report: Dict, report_sendback_reason: str) -> Dict
 
 def get_report_commented_card(report: Dict, report_comment: str) -> Dict:
 
-    headline_text = '💬  {} ({}) commented on your expense report [[{}]]({})'.format(
+    headline_text = '💬  {} ({}) commented on your expense report [{}]'.format(
         report['updated_by_user']['full_name'],
         report['updated_by_user']['email'],
-        report['seq_num'],
-        fyle_utils.get_fyle_resource_url(report, FyleResourceType.REPORT.value)
+        report['seq_num']
     )
     report_commented_card = get_report_details_card(report, headline_text)
 
@@ -714,11 +681,10 @@ def get_report_commented_card(report: Dict, report_comment: str) -> Dict:
 
 def get_expense_commented_card(expense: Dict, expense_comment: str) -> Dict:
 
-    headline_text = '💬  {} ({}) commented on your expense [[{}]]({})'.format(
+    headline_text = '💬  {} ({}) commented on your expense [{}]'.format(
         expense['updated_by_user']['full_name'],
         expense['updated_by_user']['email'],
-        expense['seq_num'],
-        fyle_utils.get_fyle_resource_url(expense, FyleResourceType.EXPENSE.value)
+        expense['seq_num']
     )
 
     expense_comment_card = get_expense_details_card(expense, headline_text)

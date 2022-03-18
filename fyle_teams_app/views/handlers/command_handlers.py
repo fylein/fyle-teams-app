@@ -17,7 +17,10 @@ class CommandHandler:
     def initialize_command_handlers(self):
         self.command_handlers = {
             'UNLINK_FYLE_ACCOUNT': self.handle_unlink_fyle_account,
-            'LINK_FYLE_ACCOUNT': self.handle_link_fyle_account
+            'LINK_FYLE_ACCOUNT': self.handle_link_fyle_account,
+            'HI': self.handle_welcome_command,
+            'HELLO': self.handle_welcome_command,
+            'HELP': self.handle_help_command
         }
 
 
@@ -41,8 +44,9 @@ class CommandHandler:
 
         if command_handler is not None:
             return await command_handler(turn_context, user_id, team_id)
-
-        return JsonResponse({})
+        else:
+            message = 'Hey we couldn\'t understand that message  🤕, try `Hi`, `Hello` or `Help` to get started ⚡'
+            return await turn_context.send_activity(message)
 
 
     async def handle_unlink_fyle_account(self, turn_context: TurnContext, user_id: str, team_id: str) -> JsonResponse:
@@ -92,4 +96,50 @@ class CommandHandler:
         await turn_context.send_activity(
             message
         )
+        return JsonResponse({})
+
+
+    async def handle_welcome_command(self, turn_context: TurnContext, user_id: str, team_id: str) -> JsonResponse:
+        user = await User.get_by_id(user_id)
+
+        if user.fyle_user_id is None:
+            message = 'Hey there, seems like you have not linked your Fyle account 🤕, we\'ll send you a message with which you can link your Fyle account 🎊'
+            await turn_context.send_activity(message)
+
+            FYLE_OAUTH_URL = fyle_utils.get_fyle_oauth_url(user_id, team_id)
+            pre_auth_card = authorisation_card.get_pre_auth_card(FYLE_OAUTH_URL)
+            message_activity = Activity(
+                attachments=[CardFactory.adaptive_card(pre_auth_card)]
+            )
+        else:
+            post_auth_card = authorisation_card.get_post_auth_card()
+            message_activity = Activity(
+                attachments=[CardFactory.adaptive_card(post_auth_card)]
+            )
+
+        await turn_context.send_activity(
+            message_activity
+        )
+        return JsonResponse({})
+
+
+    async def handle_help_command(self, turn_context: TurnContext, user_id: str, team_id: str) -> JsonResponse:
+        user = await User.get_by_id(user_id)
+
+        if user.fyle_user_id is None:
+            message = 'Hey there, seems like you have not linked your Fyle account 🤕, we\'ll send you a message with which you can link your Fyle account 🎊'
+            await turn_context.send_activity(message)
+
+            FYLE_OAUTH_URL = fyle_utils.get_fyle_oauth_url(user_id, team_id)
+            pre_auth_card = authorisation_card.get_pre_auth_card(FYLE_OAUTH_URL)
+            message_activity = Activity(
+                attachments=[CardFactory.adaptive_card(pre_auth_card)]
+            )
+            await turn_context.send_activity(message_activity)
+        else:
+            message = 'To unlink your Fyle account, type `Unlink Fyle Account`'
+            await turn_context.send_activity(message)
+            message = 'Sit back and relax, You\'ll be notified whenver any action happens on your expense reports ⚡'
+            await turn_context.send_activity(message)
+
         return JsonResponse({})
