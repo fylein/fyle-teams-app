@@ -59,7 +59,7 @@ class FyleAuthorisation(View):
 
         else:
             code = request.GET.get('code')
-
+            user.fyle_user_id = None
             if user.fyle_user_id is not None:
                 # If the user already exists send a message to user indicating they've already linked Fyle account
                 message = 'Hey buddy you\'ve already linked your *Fyle* account 🌈'
@@ -71,14 +71,13 @@ class FyleAuthorisation(View):
 
             else:
 
-                user, error_occured = await User.link_fyle_account(code, user_id)
+                user, error_occured, error_message = await User.link_fyle_account(code, user_id)
 
                 if error_occured is True:
-                    message = 'Hey seems like an error occured while linking your *Fyle* account 🤕   Please try again in a while \n If the issues still persists, please contact support@fylehq.com'
 
                     await team_utils.send_message_to_user(
                         user_conversation_reference,
-                        message
+                        error_message
                     )
                 else:
                     post_auth_card = authorisation_card.get_post_auth_card()

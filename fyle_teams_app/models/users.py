@@ -39,6 +39,10 @@ class User(models.Model):
     def get_by_id(user_id: str):
         return utils.get_or_none(User, team_user_id=user_id)
 
+    @staticmethod
+    @sync_to_async
+    def get_by_fyle_user_id(fyle_user_id: str):
+        return utils.get_or_none(User, fyle_user_id=fyle_user_id)
 
     @staticmethod
     @sync_to_async
@@ -91,27 +95,36 @@ class User(models.Model):
         # Using try catch block here, if any error occurs while linking Fyle account
         # Clear fyle acccount details and remove subscriptions
         error_occured = False
+        user = None
+        error_message = None
         try:
             fyle_refresh_token = await fyle_utils.get_fyle_refresh_token(code)
 
             fyle_profile = await fyle_utils.get_fyle_profile(fyle_refresh_token)
 
-            await User.set_user_details(team_user_id, fyle_profile, fyle_refresh_token)
+            user = await User.get_by_fyle_user_id(fyle_profile['user_id'])
 
-            user = await User.get_by_id(team_user_id)
+            if user is not None:
+                error_occured = True
+                error_message = 'Hey buddy you\'ve already linked your *Fyle* account in another teams workspace. Please unlink account from there first and link here again.'
+            else:
+                await User.set_user_details(team_user_id, fyle_profile, fyle_refresh_token)
 
-            await UserSubscription.create_notification_subscriptions(user, fyle_profile)
+                user = await User.get_by_id(team_user_id)
 
-            User.track_fyle_account_linked(user, fyle_profile)
+                await UserSubscription.create_notification_subscriptions(user, fyle_profile)
+
+                User.track_fyle_account_linked(user, fyle_profile)
 
         except Exception as e:
             logger.error('Error while linking Fyle account %s', str(e))
             # Clear fyle acccount details if created
             await User.clear_user_details(team_user_id)
 
+            error_message = 'Hey seems like an error occured while linking your *Fyle* account 🤕   Please try again in a while \n If the issues still persists, please contact support@fylehq.com'
             error_occured = True
 
-        return user, error_occured
+        return user, error_occured, error_message
 
 
     @staticmethod
