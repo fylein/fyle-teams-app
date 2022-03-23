@@ -59,7 +59,7 @@ class FyleAuthorisation(View):
 
         else:
             code = request.GET.get('code')
-            user.fyle_user_id = None
+
             if user.fyle_user_id is not None:
                 # If the user already exists send a message to user indicating they've already linked Fyle account
                 message = 'Hey buddy you\'ve already linked your *Fyle* account 🌈'
