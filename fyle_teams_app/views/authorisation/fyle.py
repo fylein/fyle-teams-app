@@ -71,14 +71,13 @@ class FyleAuthorisation(View):
 
             else:
 
-                user, error_occured = await User.link_fyle_account(code, user_id)
+                user, error_occured, error_message = await User.link_fyle_account(code, user_id)
 
                 if error_occured is True:
-                    message = 'Hey seems like an error occured while linking your *Fyle* account 🤕   Please try again in a while \n If the issues still persists, please contact support@fylehq.com'
 
                     await team_utils.send_message_to_user(
                         user_conversation_reference,
-                        message
+                        error_message
                     )
                 else:
                     post_auth_card = authorisation_card.get_post_auth_card()
