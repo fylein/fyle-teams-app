@@ -27,21 +27,26 @@ def get_pre_auth_card(fyle_oauth_url) -> Dict:
                     }
                 ],
                 'style': 'emphasis'
-            }
-        ],
-        'actions': [
+            },
             {
-                'type': 'Action.OpenUrl',
-                'title': 'Link Your Fyle Account in {}'.format(FYLE_APP_DOMAIN),
-                'url': fyle_oauth_url,
-                'style': 'positive'
+                'type': 'Container',
+                'items': [
+                    {
+                        'type': 'ActionSet',
+                        'actions': [
+                            {
+                                'type': 'Action.OpenUrl',
+                                'title': 'Link Your Fyle Account in {}'.format(FYLE_APP_DOMAIN),
+                                'url': fyle_oauth_url,
+                                'style': 'positive'
+                            }
+                        ]
+                    }
+                ]
             }
         ],
         '$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',
-        'version': '1.4',
-        'selectAction': {
-            'type': 'Action.OpenUrl'
-        }
+        'version': '1.4'
     }
     return pre_auth_card
 
