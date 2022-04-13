@@ -36,7 +36,7 @@ def get_pre_auth_card(fyle_oauth_url) -> Dict:
                         'actions': [
                             {
                                 'type': 'Action.OpenUrl',
-                                'title': 'Link Your Fyle Account in {}'.format(FYLE_APP_DOMAIN),
+                                'title': 'Link in {}'.format(FYLE_APP_DOMAIN),
                                 'url': fyle_oauth_url,
                                 'style': 'positive'
                             }
