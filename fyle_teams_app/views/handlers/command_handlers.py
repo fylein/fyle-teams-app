@@ -139,7 +139,7 @@ class CommandHandler:
         else:
             message = 'To unlink your Fyle account, type `Unlink Fyle Account`'
             await turn_context.send_activity(message)
-            message = 'Sit back and relax, You\'ll be notified whenver any action happens on your expense reports ⚡'
+            message = 'Sit back and relax, You\'ll be notified whenever any action happens on your expense reports ⚡'
             await turn_context.send_activity(message)
 
         return JsonResponse({})
