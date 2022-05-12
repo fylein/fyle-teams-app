@@ -17,7 +17,6 @@ logger = logger.get_logger(__name__)
 
 
 TEAMS_BOT_ADAPTER = settings.TEAMS_BOT_ADAPTER
-TEAMS_BOT_ADAPTER.on_turn_error = FyleBot.on_error
 
 
 class TeamsView(View):
