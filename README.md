@@ -11,9 +11,20 @@
 
 * This will spin up a ngrok tunnel with a host name that will proxy slack's API calls to our local server.
 
-TODO
-## Teams app configuration ##
-
+## Creating new Teams Dev app for local development ##
+1. Get or create your microsoft account - ask from abhishek/jatin (portal access), Or sign up as a developer account
+2. Sign in to teams desktop client/go to browser teams....
+3. In the teams app store, add the "Developer Portal" and "App Studio" (deprecated but still can be useful)
+4. Create your own new app in the "Developer Portal" (Ex - Fyle Dev Jatin)
+5. In the newly created app, fill the mandatory fields and save changes
+6. Copy "App ID"
+7. Go to Developer Portal > Tools > Bot Management > Create a new bot
+8. Go to Configure. Add endpoint url (ngrok url/teams/events)
+9. Go to Client Secrets. Create a new client secret and save it somewhere safe in local. Copy bot client secretBot ID.
+10. Go to App Studio > Capabilities > Bots. Connect existing bot. Set scope as Personal.
+11. Get .env creds file from anyone from Team Slack. Update the teams app id, bot id, ... according to your own creds.
+12. Go to Teams App store. Install App Studio .
+13. Inside this app studio, go to your dev app. Go to Test and distribute. Click on Add .
 
 ## Local Development ##
 
@@ -70,7 +81,12 @@ TODO
 
 ### Connecting to PostgreSQL DB container ###
 
-* Ensure that you have services up and running. Then run the following command to connect to the PostgreSQL DB.
+* Ensure that you have services up and running. Then, run the following command to go into interactive-shell of the database service container.
+    ```
+    docker-compose exec database bash
+    ```
+    
+* And then run the following command to connect to the PostgreSQL DB.
     ```
     PGPASSWORD=teams12345 psql -h localhost -U teams_user teams_db
     ```
