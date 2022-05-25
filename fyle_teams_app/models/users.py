@@ -26,7 +26,7 @@ class User(models.Model):
     fyle_user_id = models.CharField(max_length=120, unique=True, blank=True, null=True)
     fyle_refresh_token = models.TextField(blank=True, null=True)
     fyle_org_id = models.CharField(max_length=120, blank=True, null=True)
-
+    fyle_org_name = models.CharField(max_length=120, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -74,6 +74,7 @@ class User(models.Model):
             fyle_user_id=fyle_profile['user_id'],
             fyle_refresh_token=fyle_refresh_token,
             fyle_org_id=fyle_profile['org_id'],
+            fyle_org_name=fyle_profile['org']['name'],
             email=fyle_profile['user']['email']
         )
 
@@ -134,11 +135,12 @@ class User(models.Model):
             'fyle_user_id': user.fyle_user_id,
             'email': user.email,
             'team_id': user.team_id,
+            'fyle_org_id': user.fyle_org_id,
+            'fyle_org_name': fyle_profile['org']['name'],
             'fyle_roles': fyle_profile['roles']
         }
 
         tracking = Tracking(user.email)
-
         tracking.track_event(user.email, 'Fyle Account Linked To Teams', event_data)
 
     @staticmethod

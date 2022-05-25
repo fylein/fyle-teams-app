@@ -87,7 +87,9 @@ class FyleNotificationView(View):
             'asset': 'TEAMS_APP',
             'team_user_id': user.team_user_id,
             'fyle_user_id': user.fyle_user_id,
-            'email': user.email
+            'email': user.email,
+            'fyle_org_id': user.fyle_org_id,
+            'fyle_org_name': user.fyle_org_name,
         }
         return event_data
 
