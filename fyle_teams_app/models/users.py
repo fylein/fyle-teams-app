@@ -150,12 +150,13 @@ class User(models.Model):
 
     @staticmethod
     def track_bot_installation_status(user_details: TeamsChannelAccount, event_name: str):
+        user_email = user_details.email if user_details.email is not None else user_details.user_principal_name
         event_data = {
             'user_id': user_details.id,
             'team_id': user_details.tenant_id,
-            'email': user_details.email,
+            'email': user_email,
             'name': user_details.name
         }
 
-        tracking = Tracking(user_details.email)
-        tracking.track_event(user_details.email, event_name, event_data)
+        tracking = Tracking(user_email)
+        tracking.track_event(user_email, event_name, event_data)
