@@ -1,3 +1,10 @@
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+-- SCRIPTS TO RUN AFTER MIGRATION CHANGES HAVE BEEN APPLIED
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+
+
 -- Script to take dump of all distinct fyle-org-ids from slack db
 \copy (
     select 
@@ -41,6 +48,37 @@ set
     users.fyle_org_name = slack_org_names.name
 where 
     users.fyle_org_id = slack_org_names.id
+;
+
+commit;
+
+
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+-- SCRIPTS TO REVERT THE ABOVE MIGRATION CHANGE IN CASE IF REQUIRED
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+
+-- Script to delete a specific migration
+begin;
+
+delete 
+from
+    django_migrations
+where
+    id = <MIGRATION_ID>
+;
+
+commit;
+
+
+-- Script to remove the newly added column in a table, which was added as part of migration
+begin;
+
+alter table 
+    users
+drop column
+    fyle_org_name
 ;
 
 commit;
