@@ -11,9 +11,23 @@
 
 * This will spin up a ngrok tunnel with a host name that will proxy slack's API calls to our local server.
 
-TODO
-## Teams app configuration ##
-
+## Creating new Teams Dev app for local development ##
+1. Get or create your microsoft account - ask from abhishek/jatin (portal access), Or sign up as a developer account.
+2. Sign-in to teams desktop client, Or can also use to ms teams in browser.
+3. In the teams app store, add these two apps - "Developer Tools" and "App Studio" (this will deprecate soon).
+4. In Developer Tools, go to Tools > Bot Management > New Bot.
+5. Give a name to the bot (Fyle Dev Bot).
+6. Inside the bot, go to Configure. Add the Bot endpoint address -> <YOUR_NGROK_URL>/teams/events.
+7. Copy the "bot id".
+8. Go to Client Secrets > Add a client secret for your bot. Copy the "bot secret" somewhere safe.
+9. In Developer Tools, go to Apps. Create your own new app as "Fyle Dev" (can give a name of your choice).
+10. In the newly created app, fill the mandatory fields and save changes.
+11. Go to App Features > Bot > Identify your bot > Select an existing bot. Select the scope as Personal. 
+12. Add these bot commands - "Link Fyle Account", and "Unlink Fyle Account".
+13. Inside the app, under Configure, go to Basic Information. Copy "App ID"
+14. Get .env creds file from anyone from Team Slack. 
+15. Inside .env file, update the TEAMS_APP_ID, TEAMS_BOT_ID, TEAMS_BOT_PASSWORD, TEAMS_SERVICE_BASE_URL (add ngrok url here) according to your local app creds.
+16. Inside this App Studio app, go to your dev app. Go to Test and distribute. Click on Add app.
 
 ## Local Development ##
 
@@ -70,7 +84,12 @@ TODO
 
 ### Connecting to PostgreSQL DB container ###
 
-* Ensure that you have services up and running. Then run the following command to connect to the PostgreSQL DB.
+* Ensure that you have services up and running. Then, run the following command to go into interactive-shell of the database service container.
+    ```
+    docker-compose exec database bash
+    ```
+    
+* And then run the following command to connect to the PostgreSQL DB.
     ```
     PGPASSWORD=teams12345 psql -h localhost -U teams_user teams_db
     ```
