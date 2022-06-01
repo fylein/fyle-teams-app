@@ -36,7 +36,6 @@ oauthlib==3.1.1
 platformdirs==2.4.0
 psycopg2-binary==2.9.2
 pycparser==2.21
-PyJWT==2.4.0
 pylint==2.12.1
 python-dateutil==2.8.2
 pytz==2021.3
