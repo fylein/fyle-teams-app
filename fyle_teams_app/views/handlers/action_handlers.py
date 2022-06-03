@@ -100,7 +100,8 @@ class ActionHandler:
             'email': user.email,
             'team_id': user.team_id,
             'report_id': report['id'],
-            'org_id': report['org_id']
+            'org_id': report['org_id'],
+            'org_name': user.fyle_org_name
         }
 
         tracking = Tracking(user.email)
