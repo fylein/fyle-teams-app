@@ -26,7 +26,7 @@ class User(models.Model):
     fyle_user_id = models.CharField(max_length=120, unique=True, blank=True, null=True)
     fyle_refresh_token = models.TextField(blank=True, null=True)
     fyle_org_id = models.CharField(max_length=120, blank=True, null=True)
-    fyle_org_name = models.CharField(max_length=120, blank=True)
+    fyle_org_name = models.CharField(max_length=120, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
