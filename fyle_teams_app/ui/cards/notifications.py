@@ -191,7 +191,7 @@ def get_report_approval_card(report: Dict, message: str = None, can_approve_repo
                         'facts': [
                             {
                                 'title': 'Amount',
-                                'value': '{} {}'.format(report['currency'], report['amount'])
+                                'value': '{}'.format(utils.get_display_amount(report['amount'], report['currency']))
                             },
                             {
                                 'title': 'No. of Expenses',
@@ -344,7 +344,7 @@ def get_report_details_card(report: Dict, headline_text: str) -> Dict:
                             },
                             {
                                 'title': 'Amount',
-                                'value': '{} {}'.format(report['currency'], report['amount'])
+                                'value': '{}'.format(utils.get_display_amount(report['amount'], report['currency']))
                             },
                             {
                                 'title': 'Number of expenses',
@@ -393,15 +393,17 @@ def get_expense_details_card(expense: Dict, headline_text: str) -> Dict:
 
     currency = expense['currency']
     amount =  expense['amount']
+    display_amount = utils.get_display_amount(amount, currency)
 
-    amount_details = '{} {}'.format(currency, amount)
+    amount_details = '{}'.format(display_amount)
 
     # If foreign currency exists, then show foreign amount and currency
     if expense['foreign_currency'] is not None:
         foreign_currency = expense['foreign_currency']
         foreign_amount =  expense['foreign_amount']
+        display_foreign_amount = utils.get_display_amount(foreign_amount, foreign_currency)
 
-        amount_details = '{} \n ({} {})'.format(amount_details, foreign_currency, foreign_amount)
+        amount_details = '{} \n ({})'.format(amount_details, display_foreign_amount)
 
     expense_details_card = {
         'type': 'AdaptiveCard',
