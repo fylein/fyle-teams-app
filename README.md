@@ -11,7 +11,7 @@
 
 * This will spin up a ngrok tunnel with a host name that will proxy slack's API calls to our local server.
 
-## Creating new Teams Dev app for local development ##
+## Creating a new Teams Dev app for local development ##
 1. Get or create your microsoft account - ask from abhishek/jatin (portal access), Or sign up as a developer account.
 2. Sign-in to teams desktop client, Or can also use to ms teams in browser.
 4. In Developer Tools, go to Tools > Bot Management > New Bot.
@@ -26,6 +26,8 @@
 13. Inside the app, under Configure, go to Basic Information. Copy "App ID"
 14. Get .env creds file from anyone from Team Slack. 
 15. Inside .env file, update the TEAMS_APP_ID, TEAMS_BOT_ID, TEAMS_BOT_PASSWORD, TEAMS_SERVICE_BASE_URL (add ngrok url here) according to your local app creds.
+
+## Installing the Teams Dev app on your Microsoft Teams account ## 
 16. To install the app, go to Developer Portal, navigate to the 'Apps' menu and identify the app the you just created. Select 'Download app package' from the options menu.
     - A .zip file with the name of your app should start downloading.
 17. Now, navigate to the 'Apps' page in the teams sidebar, go to 'Manage Apps' and Upload the .zip file that you just downloaded using the 'Upload an app' button and choosing 'Upload a customized app'.
@@ -95,3 +97,8 @@
     ```
     PGPASSWORD=teams12345 psql -h localhost -U teams_user teams_db
     ```
+
+### Commonly faced issues ###
+* If you face an error like `psycopg2.errors.UndefinedTable: relation "users" does not exist` while starting the server,
+  * Uninstall your Teams Dev app by right clicking on your app from the sidebar and selecting 'Uninstall'.
+  * Reinstall the app by following the steps given [here](#installing-the-teams-dev-app-on-your-microsoft-teams-account)
