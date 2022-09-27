@@ -127,6 +127,8 @@ def get_report_approval_card(report: Dict, message: str = None, can_approve_repo
     #     }
     #     view_report_expenses_view.append(expense_view)
 
+    display_amount = utils.get_display_amount(report['amount'], report['currency'])
+
     report_approval_card = {
         'type': 'AdaptiveCard',
         '$schema': 'http://adaptivecards.io/schemas/adaptive-card.json',
@@ -191,7 +193,7 @@ def get_report_approval_card(report: Dict, message: str = None, can_approve_repo
                         'facts': [
                             {
                                 'title': 'Amount',
-                                'value': '{}'.format(utils.get_display_amount(report['amount'], report['currency']))
+                                'value': '{}'.format(display_amount)
                             },
                             {
                                 'title': 'No. of Expenses',
@@ -302,6 +304,7 @@ def get_report_approval_card(report: Dict, message: str = None, can_approve_repo
 
 
 def get_report_details_card(report: Dict, headline_text: str) -> Dict:
+    display_amount = utils.get_display_amount(report['amount'], report['currency'])
 
     report_details_card = {
         'type': 'AdaptiveCard',
@@ -344,7 +347,7 @@ def get_report_details_card(report: Dict, headline_text: str) -> Dict:
                             },
                             {
                                 'title': 'Amount',
-                                'value': '{}'.format(utils.get_display_amount(report['amount'], report['currency']))
+                                'value': '{}'.format(display_amount)
                             },
                             {
                                 'title': 'Number of expenses',
