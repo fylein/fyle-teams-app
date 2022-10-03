@@ -14,7 +14,7 @@
 ## Creating a new Teams Dev app for local development ##
 1. Get or create your microsoft account - ask from abhishek/jatin (portal access), Or sign up as a developer account.
 2. Sign-in to teams desktop client, Or can also use to ms teams in browser.
-4. In Developer Tools, go to Tools > Bot Management > New Bot.
+4. In Developer Portal, go to Tools > Bot Management > New Bot.
 5. Give a name to the bot (Fyle Dev Bot).
 6. Inside the bot, go to Configure. Add the Bot endpoint address -> <YOUR_NGROK_URL>/teams/events.
 7. Copy the "bot id".
