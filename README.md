@@ -28,7 +28,7 @@
 15. Inside .env file, update the TEAMS_APP_ID, TEAMS_BOT_ID, TEAMS_BOT_PASSWORD, TEAMS_SERVICE_BASE_URL (add ngrok url here) according to your local app creds.
 
 ## Installing the Teams Dev app on your Microsoft Teams account ## 
-16. To install the app, go to Developer Portal, navigate to the 'Apps' menu and identify the app the you just created. Select 'Download app package' from the options menu.
+16. To install the app, go to Developer Portal, navigate to the 'Apps' menu and identify the app the you just created in Step 9. Select 'Download app package' from the options menu.
     - A .zip file with the name of your app should start downloading.
 17. Now, navigate to the 'Apps' page in the teams sidebar, go to 'Manage Apps' and Upload the .zip file that you just downloaded using the 'Upload an app' button and choosing 'Upload a customized app'.
 
