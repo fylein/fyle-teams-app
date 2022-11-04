@@ -11,23 +11,26 @@
 
 * This will spin up a ngrok tunnel with a host name that will proxy slack's API calls to our local server.
 
-## Creating new Teams Dev app for local development ##
+## Creating a new Teams Dev app for local development ##
 1. Get or create your microsoft account - ask from abhishek/jatin (portal access), Or sign up as a developer account.
 2. Sign-in to teams desktop client, Or can also use to ms teams in browser.
-3. In the teams app store, add these two apps - "Developer Tools" and "App Studio" (this will deprecate soon).
-4. In Developer Tools, go to Tools > Bot Management > New Bot.
+4. In Developer Portal, go to Tools > Bot Management > New Bot.
 5. Give a name to the bot (Fyle Dev Bot).
 6. Inside the bot, go to Configure. Add the Bot endpoint address -> <YOUR_NGROK_URL>/teams/events.
 7. Copy the "bot id".
 8. Go to Client Secrets > Add a client secret for your bot. Copy the "bot secret" somewhere safe.
-9. In Developer Tools, go to Apps. Create your own new app as "Fyle Dev" (can give a name of your choice).
+9. In Developer Portal, go to Apps. Create your own new app as "Fyle Dev" (can give a name of your choice).
 10. In the newly created app, fill the mandatory fields and save changes.
 11. Go to App Features > Bot > Identify your bot > Select an existing bot. Select the scope as Personal. 
 12. Add these bot commands - "Link Fyle Account", and "Unlink Fyle Account".
 13. Inside the app, under Configure, go to Basic Information. Copy "App ID"
 14. Get .env creds file from anyone from Team Slack. 
 15. Inside .env file, update the TEAMS_APP_ID, TEAMS_BOT_ID, TEAMS_BOT_PASSWORD, TEAMS_SERVICE_BASE_URL (add ngrok url here) according to your local app creds.
-16. Inside this App Studio app, go to your dev app. Go to Test and distribute. Click on Add app.
+
+## Installing the Teams Dev app on your Microsoft Teams account ## 
+16. To install the app, go to Developer Portal, navigate to the 'Apps' menu and identify the app the you just created in Step 9. Select 'Download app package' from the options menu.
+    - A .zip file with the name of your app should start downloading.
+17. Now, navigate to the 'Apps' page in the teams sidebar, go to 'Manage Apps' and Upload the .zip file that you just downloaded using the 'Upload an app' button and choosing 'Upload a customized app'.
 
 ## Local Development ##
 
@@ -39,6 +42,7 @@
     SECRET_KEY=fakedjangosecretkey
     FYLE_CLIENT_ID=fakefyleclientid
     FYLE_CLIENT_SECRET=fakefyleclientsecret
+    FYLE_APP_URL=fakefyleappurl
     FYLE_ACCOUNTS_URL=fakefyleaccounturl
     FYLE_BRANCHIO_BASE_URI=fakefylebranchiobaseuri
     TEAMS_APP_ID=faketeamsappid
@@ -93,3 +97,8 @@
     ```
     PGPASSWORD=teams12345 psql -h localhost -U teams_user teams_db
     ```
+
+### Commonly faced issues ###
+* If you face an error like `psycopg2.errors.UndefinedTable: relation "users" does not exist` while starting the server,
+  * Uninstall your Teams Dev app by right clicking on your app from the sidebar and selecting 'Uninstall'.
+  * Reinstall the app by following the steps given [here](#installing-the-teams-dev-app-on-your-microsoft-teams-account)
