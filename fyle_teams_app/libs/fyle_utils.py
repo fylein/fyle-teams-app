@@ -105,8 +105,8 @@ async def get_fyle_profile(refresh_token: str) -> Dict:
 def get_fyle_resource_url(resource: Dict, resource_type: str) -> str:
 
     RESOURCE_URL_MAPPING = {
-        FyleResourceType.REPORT.value: '{}/app/main/#/enterprise/reports'.format(settings.FYLE_APP_URL),
-        FyleResourceType.EXPENSE.value: '{}/app/main/#/enterprise/view_expense'.format(settings.FYLE_APP_URL)
+        FyleResourceType.REPORT.value: '{}/app/main/#/reports'.format(settings.FYLE_APP_URL),
+        FyleResourceType.EXPENSE.value: '{}/app/main/#/view_expense'.format(settings.FYLE_APP_URL)
     }
 
     resource_base_url = RESOURCE_URL_MAPPING[resource_type]
