@@ -5,9 +5,12 @@ from botbuilder.schema import Activity
 
 from django.http import JsonResponse
 
-from fyle_teams_app.libs import fyle_utils
+from fyle_teams_app.libs import fyle_utils, logger
 from fyle_teams_app.models import User, UserSubscription
 from fyle_teams_app.ui.cards import authorisation as authorisation_card
+
+
+logger = logger.get_logger(__name__)
 
 
 class CommandHandler:
@@ -29,11 +32,15 @@ class CommandHandler:
         # Initialising command handlers
         self.initialize_command_handlers()
 
+        logger.info('Received message: %s', turn_context)
+
         command = turn_context.activity.text
 
         # Converting message command to a consistent format
         # Ex: 'Fyle Unlink Account' -> 'FYLE_UNLINK_ACCOUNT'
         command = command.strip().upper().replace(' ', '_')
+
+        logger.info('Command received: %s', command)
 
         command_handler = self.command_handlers.get(command)
 
