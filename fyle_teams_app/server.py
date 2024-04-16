@@ -36,13 +36,19 @@ class TeamsView(View):
         else:
             return JsonResponse({}, status=415)
 
+        logger.info('Request received from Teams -> %s', body)
+
         activity = Activity().deserialize(body)
+        logger.info('Activity received from Teams -> %s', activity)
+
         auth_header = (
             request.headers['Authorization'] if 'Authorization' in request.headers else ''
         )
+        logger.info('Auth header received from Teams -> %s', auth_header)
 
         try:
             response = await TEAMS_BOT_ADAPTER.process_activity(activity, auth_header, FyleBot().on_turn)
+            logger.info('Response from Teams -> %s', response)
 
             if response:
                 return JsonResponse(response.body, status=response.status)
@@ -59,4 +65,5 @@ class TeamsView(View):
 class KubernetesView(View):
 
     def get(self, request: HttpRequest) -> HttpResponse:
+        
         return JsonResponse({'message': 'teams service is ready'}, status=200)
