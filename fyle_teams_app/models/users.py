@@ -106,7 +106,7 @@ class User(models.Model):
             logger.info(f"Fyle profile: {fyle_profile}")
 
             user = await User.get_by_fyle_user_id(fyle_profile['user_id'])
-            logger.info(f"User 1: {user.__dict__}")
+            logger.info(f"User 1: {user}")
 
             if user is not None:
                 error_occured = True
@@ -115,7 +115,7 @@ class User(models.Model):
                 await User.set_user_details(team_user_id, fyle_profile, fyle_refresh_token)
 
                 user = await User.get_by_id(team_user_id)
-                logger.info(f"User 2: {user.__dict__}")
+                logger.info(f"User 2: {user}")
                 await UserSubscription.create_notification_subscriptions(user, fyle_profile)
 
                 User.track_fyle_account_linked(user, fyle_profile)
