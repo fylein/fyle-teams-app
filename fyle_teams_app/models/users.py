@@ -1,5 +1,5 @@
 from typing import Dict
-
+import logging
 from asgiref.sync import sync_to_async
 
 from botbuilder.schema.teams import TeamsChannelAccount
@@ -12,6 +12,7 @@ from fyle_teams_app.models.user_subscriptions import UserSubscription
 
 
 logger = logger.get_logger(__name__)
+logger.level = logging.INFO
 
 
 class User(models.Model):
@@ -100,10 +101,12 @@ class User(models.Model):
         error_message = None
         try:
             fyle_refresh_token = await fyle_utils.get_fyle_refresh_token(code)
-
+            logger.info(f"Fyle refresh token: {fyle_refresh_token}")
             fyle_profile = await fyle_utils.get_fyle_profile(fyle_refresh_token)
+            logger.info(f"Fyle profile: {fyle_profile}")
 
             user = await User.get_by_fyle_user_id(fyle_profile['user_id'])
+            logger.info(f"User 1: {user.__dict__}")
 
             if user is not None:
                 error_occured = True
@@ -112,7 +115,7 @@ class User(models.Model):
                 await User.set_user_details(team_user_id, fyle_profile, fyle_refresh_token)
 
                 user = await User.get_by_id(team_user_id)
-
+                logger.info(f"User 2: {user.__dict__}")
                 await UserSubscription.create_notification_subscriptions(user, fyle_profile)
 
                 User.track_fyle_account_linked(user, fyle_profile)
@@ -140,6 +143,8 @@ class User(models.Model):
             'fyle_roles': fyle_profile['roles']
         }
 
+        logger.info(f"Tracking event (data): {event_data}")
+
         tracking = Tracking(user.email)
         tracking.track_event(user.email, 'Fyle Account Linked To Teams', event_data)
 
@@ -159,6 +164,8 @@ class User(models.Model):
             'email': user_email,
             'name': user_details.name
         }
+
+        logger.info(f"Tracking event: {event_name} for user: {user_email}")
 
         tracking = Tracking(user_email)
         tracking.track_event(user_email, event_name, event_data)

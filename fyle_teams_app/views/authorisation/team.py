@@ -29,6 +29,7 @@ class TeamAuthorisation:
 
         # Check if user already exists
         user = await User.get_by_id(user_id)
+        logger.info(f"User: {user}")
 
         # If user exists -> user has already installed Fyle app
         if user is not None:
