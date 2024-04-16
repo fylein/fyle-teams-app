@@ -58,6 +58,7 @@ async def get_cluster_domain(access_token: str) -> str:
     }
 
     response = await http.post(url=cluster_domain_url, headers=headers)
+    logger.info('Fetched cluster domain response %s', response.json())
     assertions.assert_valid(response.status == 200, 'Error fetching cluster domain')
 
     response = await response.json()

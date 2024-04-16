@@ -1,3 +1,4 @@
+import logging
 from typing import Any, Callable, Dict, Tuple
 
 import json
@@ -8,6 +9,7 @@ from fyle_teams_app.libs import logger
 
 
 logger = logger.get_logger(__name__)
+logger.level = logging.INFO
 
 
 async def http_request(method: str, url: str, headers: Dict = None, **kwargs: Any) -> aiohttp.ClientResponse:
@@ -20,6 +22,8 @@ async def http_request(method: str, url: str, headers: Dict = None, **kwargs: An
             headers=headers,
             **kwargs
         )
+        logger.info('Request %s %s %s', method, url, resp.status)
+        logger.info('Response %s', await resp.text())
 
         return resp
 
