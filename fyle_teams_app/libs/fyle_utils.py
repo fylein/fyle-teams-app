@@ -1,4 +1,5 @@
 import enum
+import logging
 
 from typing import Dict, Tuple
 
@@ -6,7 +7,11 @@ from fyle.platform import Platform
 
 from django.conf import settings
 
-from fyle_teams_app.libs import http, assertions, utils
+from fyle_teams_app.libs import http, assertions, utils, logger
+
+
+logger = logger.get_logger(__name__)
+logger.level = logging.INFO
 
 
 FYLE_TOKEN_URL = '{}/oauth/token'.format(settings.FYLE_ACCOUNTS_URL)
@@ -30,7 +35,9 @@ class FyleResourceType(enum.Enum):
 
 async def get_fyle_sdk_connection(refresh_token: str) -> Platform:
     access_token = await get_fyle_access_token(refresh_token)
+    logger.info('Fetched Fyle access token %s', access_token)
     cluster_domain = await get_cluster_domain(access_token)
+    logger.info('Fetched cluster domain %s', cluster_domain)
 
     FYLE_PLATFORM_URL = '{}/platform/v1'.format(cluster_domain)
 
