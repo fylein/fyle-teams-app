@@ -1,5 +1,4 @@
 from typing import List
-
 from botbuilder.schema import ConversationReference, Attachment, Activity
 
 from django.conf import settings

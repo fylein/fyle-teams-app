@@ -1,5 +1,5 @@
 import asyncio
-
+import logging
 from botbuilder.schema import ConversationReference
 from botbuilder.core import CardFactory
 
@@ -13,8 +13,8 @@ from fyle_teams_app.models import User
 from fyle_teams_app.libs import utils, assertions, logger, team_utils
 from fyle_teams_app.ui.cards import authorisation as authorisation_card
 
-
 logger = logger.get_logger(__name__)
+logger.level = logging.INFO
 
 
 class FyleAuthorisation(View):
@@ -33,6 +33,8 @@ class FyleAuthorisation(View):
         state = request.GET.get('state')
 
         state_params = utils.decode_state(state)
+
+        logger.info(f"State params: {state_params}")
 
         user_id = state_params['user_id']
 
@@ -60,9 +62,13 @@ class FyleAuthorisation(View):
         else:
             code = request.GET.get('code')
 
+            logger.info(f"Code from auth: {code}")
+
             if user.fyle_user_id is not None:
                 # If the user already exists send a message to user indicating they've already linked Fyle account
                 message = 'Hey buddy you\'ve already linked your *Fyle* account 🌈'
+
+                logger.info(f"User already linked Fyle account: {user.fyle_user_id}")
 
                 await team_utils.send_message_to_user(
                     user_conversation_reference,
@@ -74,14 +80,14 @@ class FyleAuthorisation(View):
                 user, error_occured, error_message = await User.link_fyle_account(code, user_id)
 
                 if error_occured is True:
-
+                    logger.info(f'Error occured while linking Fyle account: {error_message}')
                     await team_utils.send_message_to_user(
                         user_conversation_reference,
                         error_message
                     )
                 else:
                     post_auth_card = authorisation_card.get_post_auth_card()
-
+                    logger.info(f"Post auth card: {post_auth_card}")
                     await team_utils.send_message_to_user(
                         user_conversation_reference,
                         attachments=[CardFactory.adaptive_card(post_auth_card)]
